@@ -97,7 +97,7 @@
   color: white;
 }
 
-.letters-row button:active {
+.letters-row button:focus {
   background-color: #9ea1a3;
   transform: translateY(1px);
 }
@@ -178,6 +178,7 @@ nav div i:hover {
     text-align: start;
     margin-left: 10px;
   }
+
   .hidden {
     display: none;
   }
