@@ -45,6 +45,20 @@
   margin: 0px 2px;
 }
 
+@keyframes flip-in {
+  0% {
+    transform: rotateX(0);
+  }
+
+  50% {
+    transform: rotateX(-90deg);
+  }
+
+  100% {
+    transform: rotateX(0);
+  }
+}
+
 .game-col p {
   font-size: 35px;
   text-transform: capitalize;
