@@ -1,3 +1,170 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap");
+
 * {
   margin: 0;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 75vh;
+  margin-top: 5vh;
+}
+
+.wrapper main {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2vh;
+}
+
+.game-row {
+  display: flex;
+  margin-bottom: 7px;
+}
+
+.game-row:first-child {
+  margin-top: 2vh;
+}
+
+.game-row:last-child {
+  margin-bottom: auto;
+}
+
+.game-col {
+  height: 60px;
+  width: 60px;
+  border: solid 2px #d3d6da;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 2px;
+}
+
+.game-col p {
+  font-size: 35px;
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.wrapper article {
+  display: flex;
+  flex-direction: column;
+}
+
+.letters-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.letters-row button {
+  margin: 3px;
+  cursor: pointer;
+  text-align: center;
+  border: 0px;
+  background-color: #d3d6da;
+  border-radius: 3px;
+  min-width: 43px;
+  height: 60px;
+  font-weight: bold;
+  font-size: 20px;
+  text-transform: capitalize;
+  box-shadow: 0 2px #9ea1a3;
+}
+
+.letters-row button:hover {
+  background-color: #9ea1a3;
+  box-shadow: 0 2px #767777;
+  color: white;
+}
+
+.letters-row button:active {
+  background-color: #9ea1a3;
+  transform: translateY(1px);
+}
+
+#enter {
+  font-size: 15px;
+}
+
+#backspace,
+#enter {
+  padding: 0 20px;
+}
+
+.correct {
+  background-color: #6aaa64 !important;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px #6aaa64 !important;
+  cursor: default !important;
+}
+
+.partial {
+  background-color: #c9b458 !important;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px #c9b458 !important;
+  cursor: default !important;
+}
+
+.incorrect {
+  background-color: #787c7e !important;
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px #787c7e !important;
+  cursor: default !important;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+  text-align: center;
+  border-bottom: 1px solid #d3d6da;
+  padding-bottom: 10px;
+  margin-top: 10px;
+  justify-content: flex-start;
+}
+
+nav h1 {
+  flex-grow: 2;
+}
+
+nav div {
+  display: flex;
+  margin-right: 10px;
+  width: 180px;
+}
+
+nav div i {
+  min-width: 50px;
+  font-size: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+nav div i:hover {
+  color: #929396;
+}
+
+.hidden {
+  visibility: hidden;
+  width: 180px;
+}
+
+@media screen and (max-width: 800px) {
+  nav h1 {
+    flex-grow: 1;
+    text-align: start;
+    margin-left: 10px;
+  }
+  .hidden {
+    display: none;
+  }
 }
