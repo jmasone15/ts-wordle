@@ -13,8 +13,9 @@
 // 2. Statistics
 // 3. Help
 // 4. Word History
-import wordJson from "./utils/words.json";
+const randomWord = async (): Promise<string> => {
+  const response = await fetch("./assets/utils/words.json");
+  const data = await response.json();
 
-const randomWord = (): string => {
-  return wordJson[Math.floor(Math.random() * wordJson.length)];
+  return data[Math.floor(Math.random() * data.length)];
 };

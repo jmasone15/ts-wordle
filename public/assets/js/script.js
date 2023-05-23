@@ -1,9 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const words_json_1 = __importDefault(require("./utils/words.json"));
-const randomWord = () => {
-    return words_json_1.default[Math.floor(Math.random() * words_json_1.default.length)];
+const randomWord = async () => {
+    const response = await fetch("./assets/utils/words.json");
+    const data = await response.json();
+    return data[Math.floor(Math.random() * data.length)];
 };
