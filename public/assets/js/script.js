@@ -4,10 +4,10 @@ let targetWord;
 let guessNum;
 let userInput = false;
 const gameStart = async () => {
+    await randomWord();
     answerArray = [];
     guessNum = 1;
     userInput = true;
-    await randomWord();
 };
 const getLetterBox = (num) => {
     const targetRow = document.getElementById(`row${guessNum}`);
@@ -27,21 +27,39 @@ const typeLetter = (letter) => {
 };
 const submitWord = async () => {
     if (answerArray.length === 5) {
+        let correctCount = 0;
+        userInput = false;
         for (let i = 0; i < answerArray.length; i++) {
-            let targetBox = getLetterBox(i);
+            const targetBox = getLetterBox(i);
             const letter = answerArray[i];
+            const letterBox = document.getElementById(letter);
             if (letter === targetWord[i]) {
                 targetBox.classList.add("correct");
+                letterBox.classList.add("correct");
+                correctCount++;
             }
             else if (targetWord.includes(letter)) {
                 targetBox.classList.add("partial");
+                letterBox.classList.add("partial");
             }
             else {
                 targetBox.classList.add("incorrect");
+                letterBox.classList.add("incorrect");
             }
             targetBox.setAttribute("style", "animation: flip-in 0.5s");
             await delay(500);
             targetBox.removeAttribute("style");
+        }
+        if (correctCount === 5) {
+            return console.log("You win!");
+        }
+        else if (guessNum === 6) {
+            return console.log("You lose, the word was: " + targetWord);
+        }
+        else {
+            guessNum++;
+            answerArray = [];
+            userInput = true;
         }
     }
 };
@@ -54,26 +72,30 @@ const randomWord = async () => {
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 [...document.getElementsByTagName("button")].forEach(element => {
     element.addEventListener("click", () => {
-        if (["backspace", "backspace-icon"].includes(element.getAttribute("id"))) {
-            return deleteLetter();
-        }
-        else if (element.innerText === "ENTER") {
-            return submitWord();
-        }
-        else {
-            return typeLetter(element.innerText);
+        if (userInput) {
+            if (["backspace", "backspace-icon"].includes(element.getAttribute("id"))) {
+                return deleteLetter();
+            }
+            else if (element.innerText === "ENTER") {
+                return submitWord();
+            }
+            else {
+                return typeLetter(element.innerText);
+            }
         }
     });
 });
 document.addEventListener("keydown", ({ key }) => {
-    if (key.charCodeAt(0) > 96 && key.charCodeAt(0) < 123) {
-        return typeLetter(key);
-    }
-    else if (key === "Backspace") {
-        return deleteLetter();
-    }
-    else if (key === "Enter") {
-        return submitWord();
+    if (userInput) {
+        if (key.charCodeAt(0) > 96 && key.charCodeAt(0) < 123) {
+            return typeLetter(key);
+        }
+        else if (key === "Backspace") {
+            return deleteLetter();
+        }
+        else if (key === "Enter") {
+            return submitWord();
+        }
     }
 });
 gameStart();
