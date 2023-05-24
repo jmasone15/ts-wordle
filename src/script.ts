@@ -13,6 +13,8 @@
 // 2. Statistics
 // 3. Help
 // 4. Word History
+// 5. Streak
+declare const JSConfetti: any;
 
 // Game Variables
 let answerArray: string[];
@@ -87,8 +89,7 @@ const submitWord = async (): Promise<void> => {
         }
 
         if (correctCount === 5) {
-            throwConfetti();
-            return console.log("You win!");
+            return endGame();
         } else if (guessNum === 6) {
             return console.log("You lose, the word was: " + targetWord);
         } else {
@@ -106,33 +107,22 @@ const randomWord = async (): Promise<void> => {
     targetWord = data[randomIdx].toLowerCase();
     console.log(targetWord);
 };
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const checkWord = async (): Promise<boolean> => {
     const response = await fetch("./assets/utils/dictionary.json");
     const data = await response.json();
 
     return data.includes(answerArray.join(""));
 };
-const throwConfetti = () => {
-    const canvas = document.createElement("canvas");
-    document.body.appendChild(canvas);
-    const myConfetti = confetti.create(canvas, {
-        resize: true,
-        useWorker: true
-    });
-    myConfetti({
-        particleCount: 500,
-        spread: 180,
-        startVelocity: 20
-    });
-
-    setTimeout(() => {
-        myConfetti.reset();
-    }, 5000);
+const endGame = async () => {
+    // Confetti toss
+    const jsConfetti = new JSConfetti() as any;
+    await jsConfetti.addConfetti({ confettiNumber: 500 });
+    jsConfetti.clearCanvas();
 };
 
 // Event Listeners
-[...document.getElementsByTagName("button")].forEach((element) => {
+[...document.getElementsByTagName("button")].forEach(element => {
     element.addEventListener("click", () => {
         if (userInput) {
             if (["backspace", "backspace-icon"].includes(element.getAttribute("id") as string)) {
