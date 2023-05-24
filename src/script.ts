@@ -47,6 +47,7 @@ const typeLetter = (letter: string): void => {
 const submitWord = async (): Promise<void> => {
     if (answerArray.length === 5) {
         let correctCount = 0;
+        let wordArray = targetWord.split("");
         userInput = false;
 
         for (let i = 0; i < answerArray.length; i++) {
@@ -54,17 +55,23 @@ const submitWord = async (): Promise<void> => {
             const letter = answerArray[i];
             const letterBox = document.getElementById(letter) as HTMLElement;
 
-            if (letter === targetWord[i]) {
+            if (letter === wordArray[i]) {
                 targetBox.classList.add("correct");
                 letterBox.classList.add("correct");
                 correctCount++;
-            } else if (targetWord.includes(letter)) {
+                wordArray[i] = "";
+            } else if (wordArray.includes(letter)) {
                 targetBox.classList.add("partial");
                 letterBox.classList.add("partial");
+
+                let partialIndex = wordArray.indexOf(letter);
+                wordArray[partialIndex] = "";
             } else {
                 targetBox.classList.add("incorrect");
                 letterBox.classList.add("incorrect");
             }
+
+            console.log(wordArray);
 
             targetBox.setAttribute("style", "animation: flip-in 0.5s");
             await delay(500);
@@ -88,11 +95,12 @@ const randomWord = async (): Promise<void> => {
     const randomIdx = Math.floor(Math.random() * data.length);
 
     targetWord = data[randomIdx].toLowerCase();
+    console.log(targetWord);
 };
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Event Listeners
-[...document.getElementsByTagName("button")].forEach(element => {
+[...document.getElementsByTagName("button")].forEach((element) => {
     element.addEventListener("click", () => {
         if (userInput) {
             if (["backspace", "backspace-icon"].includes(element.getAttribute("id") as string)) {

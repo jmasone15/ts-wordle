@@ -28,24 +28,29 @@ const typeLetter = (letter) => {
 const submitWord = async () => {
     if (answerArray.length === 5) {
         let correctCount = 0;
+        let wordArray = targetWord.split("");
         userInput = false;
         for (let i = 0; i < answerArray.length; i++) {
             const targetBox = getLetterBox(i);
             const letter = answerArray[i];
             const letterBox = document.getElementById(letter);
-            if (letter === targetWord[i]) {
+            if (letter === wordArray[i]) {
                 targetBox.classList.add("correct");
                 letterBox.classList.add("correct");
                 correctCount++;
+                wordArray[i] = "";
             }
-            else if (targetWord.includes(letter)) {
+            else if (wordArray.includes(letter)) {
                 targetBox.classList.add("partial");
                 letterBox.classList.add("partial");
+                let partialIndex = wordArray.indexOf(letter);
+                wordArray[partialIndex] = "";
             }
             else {
                 targetBox.classList.add("incorrect");
                 letterBox.classList.add("incorrect");
             }
+            console.log(wordArray);
             targetBox.setAttribute("style", "animation: flip-in 0.5s");
             await delay(500);
             targetBox.removeAttribute("style");
@@ -68,9 +73,10 @@ const randomWord = async () => {
     const data = await response.json();
     const randomIdx = Math.floor(Math.random() * data.length);
     targetWord = data[randomIdx].toLowerCase();
+    console.log(targetWord);
 };
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-[...document.getElementsByTagName("button")].forEach(element => {
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+[...document.getElementsByTagName("button")].forEach((element) => {
     element.addEventListener("click", () => {
         if (userInput) {
             if (["backspace", "backspace-icon"].includes(element.getAttribute("id"))) {
