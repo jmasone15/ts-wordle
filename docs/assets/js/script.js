@@ -4,14 +4,17 @@ const resultTitleEl = document.getElementById("result-title");
 const resultMessageEl = document.getElementById("result-message");
 const playAgainEl = document.getElementById("play-again");
 const gameColumnEls = [...document.getElementsByClassName("game-col")];
+const miniGameColumnEls = [...document.getElementsByClassName("mini-col")];
 const keyboardBtnEls = [...document.getElementsByTagName("button")];
 let answerArray;
 let targetWord;
 let guessNum;
 let userInput = false;
+let guessesGrid = [];
 const gameStart = async () => {
     await randomWord();
     answerArray = [];
+    guessesGrid = [];
     guessNum = 1;
     userInput = true;
 };
@@ -50,21 +53,26 @@ const submitWord = async () => {
             const targetBox = getLetterBox(i);
             const letter = answerArray[i];
             const letterBox = document.getElementById(letter);
+            const result = { x: i, y: guessNum, result: "" };
             if (letter === wordArray[i]) {
                 targetBox.classList.add("correct");
                 letterBox.classList.add("correct");
+                result.result = "correct";
                 correctCount++;
                 wordArray[i] = "";
             }
             else if (wordArray.includes(letter)) {
                 targetBox.classList.add("partial");
                 letterBox.classList.add("partial");
+                result.result = "partial";
                 wordArray[wordArray.indexOf(letter)] = "";
             }
             else {
                 targetBox.classList.add("incorrect");
                 letterBox.classList.add("incorrect");
+                result.result = "incorrect";
             }
+            guessesGrid.push(result);
             targetBox.setAttribute("style", "animation: flip-in 0.5s");
             await delay(500);
         }
@@ -88,7 +96,7 @@ const randomWord = async () => {
     targetWord = data[randomIdx].toLowerCase();
     console.log(targetWord);
 };
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const checkWord = async () => {
     const response = await fetch("./assets/utils/dictionary.json");
     const data = await response.json();
@@ -96,6 +104,11 @@ const checkWord = async () => {
 };
 const endGame = async (win) => {
     modalEl.setAttribute("style", "display:flex");
+    guessesGrid.forEach(({ x, y, result }) => {
+        const targetRow = document.getElementById(`mini-row${y}`);
+        const targetBox = targetRow.children[x];
+        targetBox.classList.add(result);
+    });
     if (win) {
         resultTitleEl.textContent = "You win!";
         resultMessageEl.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
@@ -105,10 +118,10 @@ const endGame = async (win) => {
     }
     else {
         resultTitleEl.textContent = "Good try!";
-        resultMessageEl.textContent = `The word we were looking for was: ${targetWord}.`;
+        resultMessageEl.textContent = `The word we were looking for was: ${targetWord.toUpperCase()}.`;
     }
 };
-keyboardBtnEls.forEach(element => {
+keyboardBtnEls.forEach((element) => {
     element.addEventListener("click", () => {
         if (userInput) {
             if (["backspace", "backspace-icon"].includes(element.getAttribute("id"))) {
@@ -137,12 +150,17 @@ document.addEventListener("keydown", ({ key }) => {
     }
 });
 playAgainEl.addEventListener("click", () => {
-    gameColumnEls.forEach(element => {
+    gameColumnEls.forEach((element) => {
         element.innerHTML = "";
         element.removeAttribute("style");
         element.setAttribute("class", "game-col");
     });
-    keyboardBtnEls.forEach(element => {
+    miniGameColumnEls.forEach((element) => {
+        element.innerHTML = "";
+        element.removeAttribute("style");
+        element.setAttribute("class", "mini-col");
+    });
+    keyboardBtnEls.forEach((element) => {
         element.removeAttribute("class");
     });
     modalEl.setAttribute("style", "display:none");
