@@ -1,20 +1,19 @@
-// TODO
-// 1. Randomly select a word from the JSON file.
-// 2. Open the current guess row for input
-// 3. When hitting enter, check to see if the word is a real word.
-// 4. If the word is a real word, check each letter to see if it's in the word or in the right place
-// 5. Run animation on each letter and update class.
-// 6. Update the keyboard button classes.
-// 7. If the user has anymore guesses, start back at the beginning
-// 8. If the user correctly guessed the word, game over!
+// ToDo
+// 1. Animation on correct guess
+// 2. Light/Dark Mode
+// 3. Statistics
+// 4. Help
+// 5. Word History
+// 6. Streak
+// 7. Hard Mode
 
-// Post MVP
-// 1. Light/Dark Mode
-// 2. Statistics
-// 3. Help
-// 4. Word History
-// 5. Streak
 declare const JSConfetti: any;
+const modalEl = document.getElementById("game-over") as HTMLElement;
+const resultTitleEl = document.getElementById("result-title") as HTMLElement;
+const resultMessageEl = document.getElementById("result-message") as HTMLElement;
+const playAgainEl = document.getElementById("play-again") as HTMLElement;
+const gameColumnEls = [...document.getElementsByClassName("game-col")] as HTMLElement[];
+const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLElement[];
 
 // Game Variables
 let answerArray: string[];
@@ -53,6 +52,8 @@ const submitWord = async (): Promise<void> => {
         if (!isDictionaryWord) {
             for (let i = 0; i < 5; i++) {
                 const targetBox = getLetterBox(i);
+                targetBox.removeAttribute("style");
+                targetBox.offsetWidth;
                 targetBox.setAttribute("style", "animation: shake 0.2s");
             }
 
@@ -89,9 +90,9 @@ const submitWord = async (): Promise<void> => {
         }
 
         if (correctCount === 5) {
-            return endGame();
+            return endGame(true);
         } else if (guessNum === 6) {
-            return console.log("You lose, the word was: " + targetWord);
+            return endGame(false);
         } else {
             guessNum++;
             answerArray = [];
@@ -114,15 +115,25 @@ const checkWord = async (): Promise<boolean> => {
 
     return data.includes(answerArray.join(""));
 };
-const endGame = async () => {
-    // Confetti toss
-    const jsConfetti = new JSConfetti() as any;
-    await jsConfetti.addConfetti({ confettiNumber: 500 });
-    jsConfetti.clearCanvas();
+const endGame = async (win: boolean): Promise<void> => {
+    // Show Modal and Update HTML
+    modalEl.setAttribute("style", "display:flex");
+    if (win) {
+        resultTitleEl.textContent = "You win!";
+        resultMessageEl.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
+
+        // Confetti toss
+        const jsConfetti = new JSConfetti() as any;
+        await jsConfetti.addConfetti({ confettiNumber: 500 });
+        jsConfetti.clearCanvas();
+    } else {
+        resultTitleEl.textContent = "Good try!";
+        resultMessageEl.textContent = `The word we were looking for was: ${targetWord}.`;
+    }
 };
 
 // Event Listeners
-[...document.getElementsByTagName("button")].forEach(element => {
+keyboardBtnEls.forEach(element => {
     element.addEventListener("click", () => {
         if (userInput) {
             if (["backspace", "backspace-icon"].includes(element.getAttribute("id") as string)) {
@@ -145,6 +156,20 @@ document.addEventListener("keydown", ({ key }) => {
             return submitWord();
         }
     }
+});
+playAgainEl.addEventListener("click", () => {
+    // Clear game screen
+    gameColumnEls.forEach(element => {
+        element.innerHTML = "";
+        element.removeAttribute("style");
+        element.setAttribute("class", "game-col");
+    });
+    keyboardBtnEls.forEach(element => {
+        element.removeAttribute("class");
+    });
+    modalEl.setAttribute("style", "display:none");
+
+    return gameStart();
 });
 
 gameStart();

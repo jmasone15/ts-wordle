@@ -1,4 +1,10 @@
 "use strict";
+const modalEl = document.getElementById("game-over");
+const resultTitleEl = document.getElementById("result-title");
+const resultMessageEl = document.getElementById("result-message");
+const playAgainEl = document.getElementById("play-again");
+const gameColumnEls = [...document.getElementsByClassName("game-col")];
+const keyboardBtnEls = [...document.getElementsByTagName("button")];
 let answerArray;
 let targetWord;
 let guessNum;
@@ -31,6 +37,8 @@ const submitWord = async () => {
         if (!isDictionaryWord) {
             for (let i = 0; i < 5; i++) {
                 const targetBox = getLetterBox(i);
+                targetBox.removeAttribute("style");
+                targetBox.offsetWidth;
                 targetBox.setAttribute("style", "animation: shake 0.2s");
             }
             return;
@@ -61,10 +69,10 @@ const submitWord = async () => {
             await delay(500);
         }
         if (correctCount === 5) {
-            return endGame();
+            return endGame(true);
         }
         else if (guessNum === 6) {
-            return console.log("You lose, the word was: " + targetWord);
+            return endGame(false);
         }
         else {
             guessNum++;
@@ -86,12 +94,21 @@ const checkWord = async () => {
     const data = await response.json();
     return data.includes(answerArray.join(""));
 };
-const endGame = async () => {
-    const jsConfetti = new JSConfetti();
-    await jsConfetti.addConfetti({ confettiNumber: 500 });
-    jsConfetti.clearCanvas();
+const endGame = async (win) => {
+    modalEl.setAttribute("style", "display:flex");
+    if (win) {
+        resultTitleEl.textContent = "You win!";
+        resultMessageEl.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
+        const jsConfetti = new JSConfetti();
+        await jsConfetti.addConfetti({ confettiNumber: 500 });
+        jsConfetti.clearCanvas();
+    }
+    else {
+        resultTitleEl.textContent = "Good try!";
+        resultMessageEl.textContent = `The word we were looking for was: ${targetWord}.`;
+    }
 };
-[...document.getElementsByTagName("button")].forEach(element => {
+keyboardBtnEls.forEach(element => {
     element.addEventListener("click", () => {
         if (userInput) {
             if (["backspace", "backspace-icon"].includes(element.getAttribute("id"))) {
@@ -118,5 +135,17 @@ document.addEventListener("keydown", ({ key }) => {
             return submitWord();
         }
     }
+});
+playAgainEl.addEventListener("click", () => {
+    gameColumnEls.forEach(element => {
+        element.innerHTML = "";
+        element.removeAttribute("style");
+        element.setAttribute("class", "game-col");
+    });
+    keyboardBtnEls.forEach(element => {
+        element.removeAttribute("class");
+    });
+    modalEl.setAttribute("style", "display:none");
+    return gameStart();
 });
 gameStart();
