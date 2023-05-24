@@ -61,6 +61,7 @@ const submitWord = async () => {
             await delay(500);
         }
         if (correctCount === 5) {
+            throwConfetti();
             return console.log("You win!");
         }
         else if (guessNum === 6) {
@@ -85,6 +86,22 @@ const checkWord = async () => {
     const response = await fetch("./assets/utils/dictionary.json");
     const data = await response.json();
     return data.includes(answerArray.join(""));
+};
+const throwConfetti = () => {
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    const myConfetti = confetti.create(canvas, {
+        resize: true,
+        useWorker: true
+    });
+    myConfetti({
+        particleCount: 500,
+        spread: 180,
+        startVelocity: 20
+    });
+    setTimeout(() => {
+        myConfetti.reset();
+    }, 5000);
 };
 [...document.getElementsByTagName("button")].forEach((element) => {
     element.addEventListener("click", () => {

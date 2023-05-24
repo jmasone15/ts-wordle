@@ -191,6 +191,16 @@ nav div i:hover {
   width: 180px;
 }
 
+canvas {
+  z-index: 2;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: -10%;
+  border: solid 1px red
+}
+
 @media screen and (max-width: 800px) {
   nav h1 {
     flex-grow: 1;

@@ -87,6 +87,7 @@ const submitWord = async (): Promise<void> => {
         }
 
         if (correctCount === 5) {
+            throwConfetti();
             return console.log("You win!");
         } else if (guessNum === 6) {
             return console.log("You lose, the word was: " + targetWord);
@@ -111,6 +112,23 @@ const checkWord = async (): Promise<boolean> => {
     const data = await response.json();
 
     return data.includes(answerArray.join(""));
+};
+const throwConfetti = () => {
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    const myConfetti = confetti.create(canvas, {
+        resize: true,
+        useWorker: true
+    });
+    myConfetti({
+        particleCount: 500,
+        spread: 180,
+        startVelocity: 20
+    });
+
+    setTimeout(() => {
+        myConfetti.reset();
+    }, 5000);
 };
 
 // Event Listeners
