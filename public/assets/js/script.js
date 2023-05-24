@@ -27,6 +27,14 @@ const typeLetter = (letter) => {
 };
 const submitWord = async () => {
     if (answerArray.length === 5) {
+        const isDictionaryWord = await checkWord();
+        if (!isDictionaryWord) {
+            for (let i = 0; i < 5; i++) {
+                const targetBox = getLetterBox(i);
+                targetBox.setAttribute("style", "animation: shake 0.2s");
+            }
+            return;
+        }
         let correctCount = 0;
         let wordArray = targetWord.split("");
         userInput = false;
@@ -43,17 +51,14 @@ const submitWord = async () => {
             else if (wordArray.includes(letter)) {
                 targetBox.classList.add("partial");
                 letterBox.classList.add("partial");
-                let partialIndex = wordArray.indexOf(letter);
-                wordArray[partialIndex] = "";
+                wordArray[wordArray.indexOf(letter)] = "";
             }
             else {
                 targetBox.classList.add("incorrect");
                 letterBox.classList.add("incorrect");
             }
-            console.log(wordArray);
             targetBox.setAttribute("style", "animation: flip-in 0.5s");
             await delay(500);
-            targetBox.removeAttribute("style");
         }
         if (correctCount === 5) {
             return console.log("You win!");
@@ -76,6 +81,11 @@ const randomWord = async () => {
     console.log(targetWord);
 };
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const checkWord = async () => {
+    const response = await fetch("./assets/utils/dictionary.json");
+    const data = await response.json();
+    return data.includes(answerArray.join(""));
+};
 [...document.getElementsByTagName("button")].forEach((element) => {
     element.addEventListener("click", () => {
         if (userInput) {

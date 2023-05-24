@@ -1,111 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./assets/css/style.css" />
+        <title>Wordle Infinity</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-    <title>Wordle Infinity</title>
-</head>
-
-<body>
-    <nav>
-        <div class="hidden"></div>
-        <h1>Wordle Infinity</h1>
-        <div>
-            <i class="fa-solid fa-circle-question"></i>
-            <i class="fa-solid fa-chart-simple"></i>
-            <i class="fa-solid fa-gears"></i>
+    <body>
+        <nav>
+            <div class="hidden"></div>
+            <h1>Wordle Infinity</h1>
+            <div>
+                <i class="fa-solid fa-circle-question"></i>
+                <i class="fa-solid fa-chart-simple"></i>
+                <i class="fa-solid fa-gears"></i>
+            </div>
+        </nav>
+        <div class="wrapper">
+            <main>
+                <section class="game-row" id="row1">
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                </section>
+                <section class="game-row" id="row2">
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                </section>
+                <section class="game-row" id="row3">
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                </section>
+                <section class="game-row" id="row4">
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                </section>
+                <section class="game-row" id="row5">
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                </section>
+                <section class="game-row" id="row6">
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                    <div class="game-col"></div>
+                </section>
+            </main>
+            <article>
+                <section class="letters-row">
+                    <button id="q">Q</button>
+                    <button id="w">W</button>
+                    <button id="e">E</button>
+                    <button id="r">R</button>
+                    <button id="t">T</button>
+                    <button id="y">Y</button>
+                    <button id="u">U</button>
+                    <button id="i">I</button>
+                    <button id="o">O</button>
+                    <button id="p">P</button>
+                </section>
+                <section class="letters-row">
+                    <button id="a">A</button>
+                    <button id="s">S</button>
+                    <button id="d">D</button>
+                    <button id="f">F</button>
+                    <button id="g">G</button>
+                    <button id="h">H</button>
+                    <button id="j">J</button>
+                    <button id="k">K</button>
+                    <button id="l">L</button>
+                </section>
+                <section class="letters-row">
+                    <button id="enter">ENTER</button>
+                    <button id="z">Z</button>
+                    <button id="x">X</button>
+                    <button id="c">C</button>
+                    <button id="v">V</button>
+                    <button id="b">B</button>
+                    <button id="n">N</button>
+                    <button id="m">M</button>
+                    <button id="backspace">
+                        <i id="backspace-icon" class="fa-solid fa-delete-left"></i>
+                    </button>
+                </section>
+            </article>
         </div>
-    </nav>
-    <div class="wrapper">
-        <main>
-            <section class="game-row" id="row1">
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-            </section>
-            <section class="game-row" id="row2">
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-            </section>
-            <section class="game-row" id="row3">
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-            </section>
-            <section class="game-row" id="row4">
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-            </section>
-            <section class="game-row" id="row5">
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-            </section>
-            <section class="game-row" id="row6">
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-                <div class="game-col"></div>
-            </section>
-        </main>
-        <article>
-            <section class="letters-row">
-                <button id="q">Q</button>
-                <button id="w">W</button>
-                <button id="e">E</button>
-                <button id="r">R</button>
-                <button id="t">T</button>
-                <button id="y">Y</button>
-                <button id="u">U</button>
-                <button id="i">I</button>
-                <button id="o">O</button>
-                <button id="p">P</button>
-            </section>
-            <section class="letters-row">
-                <button id="a">A</button>
-                <button id="s">S</button>
-                <button id="d">D</button>
-                <button id="f">F</button>
-                <button id="g">G</button>
-                <button id="h">H</button>
-                <button id="j">J</button>
-                <button id="k">K</button>
-                <button id="l">L</button>
-            </section>
-            <section class="letters-row">
-                <button id="enter">ENTER</button>
-                <button id="z">Z</button>
-                <button id="x">X</button>
-                <button id="c">C</button>
-                <button id="v">V</button>
-                <button id="b">B</button>
-                <button id="n">N</button>
-                <button id="m">M</button>
-                <button id="backspace">
-                    <i id="backspace-icon" class="fa-solid fa-delete-left"></i>
-                </button>
-            </section>
-        </article>
-    </div>
 
-    <script src="https://kit.fontawesome.com/319698822a.js" crossorigin="anonymous"></script>
-    <script src="./assets/js/script.js"></script>
-</body>
-
+        <script src="https://kit.fontawesome.com/319698822a.js" crossorigin="anonymous"></script>
+        <script src="./assets/js/script.js"></script>
+    </body>
 </html>
