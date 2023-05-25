@@ -3,6 +3,7 @@
 * {
   margin: 0;
   font-family: "Ubuntu", sans-serif;
+  overflow-y: hidden;
 }
 
 .wrapper {
@@ -11,7 +12,6 @@
   align-items: center;
   justify-content: space-around;
   height: 90vh;
-  overflow: hidden;
   margin-top: 5vh;
 }
 

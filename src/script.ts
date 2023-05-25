@@ -5,6 +5,7 @@
 // 4. Streak
 // 5. Hard Mode
 // 6. Additional Words
+// 7. Clean up code for TS
 
 // DOM Elements
 declare const JSConfetti: any;
