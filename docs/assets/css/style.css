@@ -14,6 +14,13 @@
   margin-top: 5vh;
 }
 
+main h2 {
+  margin-bottom: none;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: all ease-in 0.3s;
+}
+
 .wrapper main {
   display: flex;
   flex-direction: column;
@@ -63,7 +70,7 @@
   justify-content: center;
 }
 
-.letters-row button {
+.letter-btn {
   margin: 3px;
   cursor: pointer;
   text-align: center;
@@ -78,13 +85,13 @@
   box-shadow: 0 2px #9ea1a3;
 }
 
-.letters-row button:hover {
+.letter-btn:hover {
   background-color: #9ea1a3;
   box-shadow: 0 2px #767777;
   color: white;
 }
 
-.letters-row button:focus {
+.letter-btn:focus {
   background-color: #9ea1a3;
   transform: translateY(1px);
 }
@@ -99,27 +106,39 @@
 }
 
 .correct {
-  background-color: #6aaa64 !important;
+  background-color: #6aaa64;
   color: white;
   border-color: transparent;
-  box-shadow: 0 2px #6aaa64 !important;
-  cursor: default !important;
+  box-shadow: 0 2px #6aaa64;
 }
 
 .partial {
-  background-color: #c9b458 !important;
+  background-color: #c9b458;
   color: white;
   border-color: transparent;
-  box-shadow: 0 2px #c9b458 !important;
-  cursor: default !important;
+  box-shadow: 0 2px #c9b458;
 }
 
 .incorrect {
-  background-color: #787c7e !important;
+  background-color: #787c7e;
   color: white;
   border-color: transparent;
-  box-shadow: 0 2px #787c7e !important;
-  cursor: default !important;
+  box-shadow: 0 2px #787c7e;
+}
+
+.letter-btn.correct:hover {
+  background-color: #4f7c4a;
+  box-shadow: 0 2px #4f7c4a;
+}
+
+.letter-btn.partial:hover {
+  background-color: #a08f46;
+  box-shadow: 0 2px #a08f46;
+}
+
+.letter-btn.incorrect:hover {
+  background-color: #3b3d3d;
+  box-shadow: 0 2px #3b3d3d;
 }
 
 nav {
@@ -265,7 +284,7 @@ canvas {
 
 @keyframes shake {
   0% {
-    transform: translateX(5px);
+    transform: translateX(8px);
   }
 
   33% {
@@ -273,11 +292,38 @@ canvas {
   }
 
   66% {
-    transform: translateX(-5px);
+    transform: translateX(-8px);
   }
 
   100% {
     transform: translateX(0px);
   }
+}
 
+@keyframes jump {
+
+  0%,
+  20% {
+    transform: translateY(0)
+  }
+
+  40% {
+    transform: translateY(-30px)
+  }
+
+  50% {
+    transform: translateY(5px)
+  }
+
+  60% {
+    transform: translateY(-15px)
+  }
+
+  80% {
+    transform: translateY(2px)
+  }
+
+  100% {
+    transform: translateY(0)
+  }
 }

@@ -1,13 +1,10 @@
 // ToDo
-// 1. Animation on correct guess
-// 2. Generate Grids Dynamically
-// 3. Light/Dark Mode
-// 4. Statistics
-// 5. Help
-// 6. Word History
-// 7. Streak
-// 8. Hard Mode
-// 9. Additional Words
+// 1. Light/Dark Mode
+// 2. Statistics
+// 3. Help
+// 4. Streak
+// 5. Hard Mode
+// 6. Additional Words
 
 // DOM Elements
 declare const JSConfetti: any;
@@ -15,6 +12,7 @@ const modalEl = document.getElementById("game-over") as HTMLElement;
 const resultTitleEl = document.getElementById("result-title") as HTMLElement;
 const resultMessageEl = document.getElementById("result-message") as HTMLElement;
 const playAgainEl = document.getElementById("play-again") as HTMLElement;
+const submitMessageEl = document.getElementById("submit-message") as HTMLElement;
 const gameColumnEls = [...document.getElementsByClassName("game-col")] as HTMLElement[];
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")] as HTMLElement[];
 const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLElement[];
@@ -60,9 +58,11 @@ const typeLetter = (letter: string): void => {
 };
 const submitWord = async (): Promise<void> => {
     if (answerArray.length === 5) {
+        submitMessageEl.style.visibility = "hidden";
         const isDictionaryWord = await checkWord();
 
         if (!isDictionaryWord) {
+            displaySubmitMessage(false);
             for (let i = 0; i < 5; i++) {
                 const targetBox = getLetterBox(i);
                 targetBox.removeAttribute("style");
@@ -82,23 +82,43 @@ const submitWord = async (): Promise<void> => {
             const letter = answerArray[i];
             const letterBox = document.getElementById(letter) as HTMLElement;
             const result: letterBoxResult = { x: i, y: guessNum, result: "" };
+            const classList = [...letterBox.classList];
 
             if (letter === wordArray[i]) {
                 targetBox.classList.add("correct");
-                letterBox.classList.add("correct");
+
+                if (classList.length > 1) {
+                    if (classList.includes("partial") || classList.includes("incorrect")) {
+                        letterBox.setAttribute("class", "letter-btn");
+                        letterBox.classList.add("correct");
+                    }
+                } else {
+                    letterBox.classList.add("correct");
+                }
 
                 result.result = "correct";
                 correctCount++;
                 wordArray[i] = "";
             } else if (wordArray.includes(letter)) {
                 targetBox.classList.add("partial");
-                letterBox.classList.add("partial");
+
+                if (classList.length > 1) {
+                    if (classList.includes("incorrect")) {
+                        letterBox.classList.remove("incorrect");
+                        letterBox.classList.add("partial");
+                    }
+                } else {
+                    letterBox.classList.add("partial");
+                }
 
                 result.result = "partial";
                 wordArray[wordArray.indexOf(letter)] = "";
             } else {
                 targetBox.classList.add("incorrect");
-                letterBox.classList.add("incorrect");
+
+                if (classList.length === 1) {
+                    letterBox.classList.add("incorrect");
+                }
 
                 result.result = "incorrect";
             }
@@ -109,6 +129,16 @@ const submitWord = async (): Promise<void> => {
         }
 
         if (correctCount === 5) {
+            displaySubmitMessage(true);
+            for (let i = 0; i < 5; i++) {
+                const targetBox = getLetterBox(i);
+                targetBox.removeAttribute("style");
+                targetBox.offsetWidth;
+                targetBox.setAttribute("style", "animation: jump 1s");
+                await delay(100);
+            }
+
+            await delay(1000);
             return endGame(true);
         } else if (guessNum === 6) {
             return endGame(false);
@@ -134,9 +164,38 @@ const checkWord = async (): Promise<boolean> => {
 
     return data.includes(answerArray.join(""));
 };
+const displaySubmitMessage = (correct: boolean): void => {
+    if (correct) {
+        switch (guessNum) {
+            case 1:
+                submitMessageEl.textContent = "AMAZING!!!";
+                break;
+            case 2:
+                submitMessageEl.textContent = "Fantastic!";
+                break;
+            case 3:
+                submitMessageEl.textContent = "Great!";
+                break;
+            case 4:
+                submitMessageEl.textContent = "Nice!";
+                break;
+            case 5:
+                submitMessageEl.textContent = "Alright!";
+                break;
+            default:
+                submitMessageEl.textContent = "Phew!";
+                break;
+        }
+    } else {
+        submitMessageEl.textContent = "Not a valid word.";
+    }
+
+    submitMessageEl.style.visibility = "visible";
+};
 const endGame = async (win: boolean): Promise<void> => {
     // Show Modal and Update HTML
     modalEl.setAttribute("style", "display:flex");
+    submitMessageEl.style.visibility = "hidden";
 
     guessesGrid.forEach(({ x, y, result }: letterBoxResult): void => {
         const targetRow = document.getElementById(`mini-row${y}`) as HTMLElement;
@@ -198,6 +257,7 @@ playAgainEl.addEventListener("click", () => {
     });
     keyboardBtnEls.forEach((element) => {
         element.removeAttribute("class");
+        element.setAttribute("class", "letter-btn");
     });
     modalEl.setAttribute("style", "display:none");
 
