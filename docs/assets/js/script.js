@@ -1,5 +1,6 @@
 "use strict";
-const modalEl = document.getElementById("game-over");
+const modalEl = document.getElementById("modal-box");
+const modalContentEl = document.getElementById("modal-data");
 const resultTitleEl = document.getElementById("result-title");
 const resultMessageEl = document.getElementById("result-message");
 const playAgainEl = document.getElementById("play-again");
@@ -178,23 +179,64 @@ const displaySubmitMessage = (correct) => {
     submitMessageEl.style.visibility = "visible";
 };
 const endGame = async (win) => {
+    await populateModal("end", win);
+};
+const populateModal = async (type, win) => {
+    if (type === "end") {
+        const h1El = document.createElement("h1");
+        const h3El = document.createElement("h3");
+        const divEl = document.createElement("div");
+        const spanEl = document.createElement("span");
+        modalContentEl.appendChild(h1El);
+        modalContentEl.appendChild(h3El);
+        modalContentEl.appendChild(divEl);
+        modalContentEl.appendChild(spanEl);
+        if (win) {
+            h1El.textContent = "You win!";
+            h3El.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
+        }
+        else {
+            h1El.textContent = "Good try!";
+            h3El.textContent = `The word we were looking for was: ${targetWord.toUpperCase()}.`;
+        }
+        for (let i = 1; i < 7; i++) {
+            const sectionEl = document.createElement("section");
+            sectionEl.setAttribute("class", "mini-row");
+            sectionEl.setAttribute("id", `mini-row${i}`);
+            for (let j = 0; j < 5; j++) {
+                const subDivEl = document.createElement("div");
+                const isGuessBox = guessesGrid.filter((value) => value.x === j && value.y === i);
+                subDivEl.setAttribute("class", isGuessBox.length > 0 ? `mini-col ${isGuessBox[0].result}` : "mini-col");
+                sectionEl.appendChild(subDivEl);
+            }
+            divEl.appendChild(sectionEl);
+        }
+        spanEl.textContent = "Play Again?";
+        spanEl.addEventListener("click", (event) => {
+            event.preventDefault();
+            gameColumnEls.forEach((element) => {
+                element.children[0].textContent = "";
+                element.removeAttribute("style");
+                element.setAttribute("class", "game-col");
+            });
+            miniGameColumnEls.forEach((element) => {
+                element.removeAttribute("style");
+                element.setAttribute("class", "mini-col");
+            });
+            keyboardBtnEls.forEach((element) => {
+                element.removeAttribute("class");
+                element.setAttribute("class", "letter-btn");
+            });
+            modalEl.setAttribute("style", "display:none");
+            return gameStart();
+        });
+    }
     modalEl.setAttribute("style", "display:flex");
     submitMessageEl.style.visibility = "hidden";
-    guessesGrid.forEach(({ x, y, result }) => {
-        const targetRow = document.getElementById(`mini-row${y}`);
-        const targetBox = targetRow.children[x];
-        targetBox.classList.add(result);
-    });
-    if (win) {
-        resultTitleEl.textContent = "You win!";
-        resultMessageEl.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
+    if (type === "end" && win) {
         const jsConfetti = new JSConfetti();
         await jsConfetti.addConfetti({ confettiNumber: 500 });
         jsConfetti.clearCanvas();
-    }
-    else {
-        resultTitleEl.textContent = "Good try!";
-        resultMessageEl.textContent = `The word we were looking for was: ${targetWord.toUpperCase()}.`;
     }
 };
 keyboardBtnEls.forEach((element) => {
@@ -227,23 +269,5 @@ document.addEventListener("keydown", (event) => {
             return submitWord();
         }
     }
-});
-playAgainEl.addEventListener("click", (event) => {
-    event.preventDefault();
-    gameColumnEls.forEach((element) => {
-        element.children[0].textContent = "";
-        element.removeAttribute("style");
-        element.setAttribute("class", "game-col");
-    });
-    miniGameColumnEls.forEach((element) => {
-        element.removeAttribute("style");
-        element.setAttribute("class", "mini-col");
-    });
-    keyboardBtnEls.forEach((element) => {
-        element.removeAttribute("class");
-        element.setAttribute("class", "letter-btn");
-    });
-    modalEl.setAttribute("style", "display:none");
-    return gameStart();
 });
 gameStart();

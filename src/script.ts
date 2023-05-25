@@ -8,7 +8,8 @@
 
 // DOM Elements
 declare const JSConfetti: any;
-const modalEl = document.getElementById("game-over") as HTMLElement;
+const modalEl = document.getElementById("modal-box") as HTMLElement;
+const modalContentEl = document.getElementById("modal-data") as HTMLElement;
 const resultTitleEl = document.getElementById("result-title") as HTMLElement;
 const resultMessageEl = document.getElementById("result-message") as HTMLElement;
 const playAgainEl = document.getElementById("play-again") as HTMLElement;
@@ -219,28 +220,77 @@ const displaySubmitMessage = (correct: boolean): void => {
     submitMessageEl.style.visibility = "visible";
 };
 const endGame = async (win: boolean): Promise<void> => {
-    // Show Modal and Update HTML
+    await populateModal("end", win);
+};
+const populateModal = async (type: string, win?: boolean): Promise<void> => {
+    if (type === "end") {
+        const h1El: HTMLElement = document.createElement("h1");
+        const h3El: HTMLElement = document.createElement("h3");
+        const divEl: HTMLElement = document.createElement("div");
+        const spanEl: HTMLElement = document.createElement("span");
+
+        modalContentEl.appendChild(h1El);
+        modalContentEl.appendChild(h3El);
+        modalContentEl.appendChild(divEl);
+        modalContentEl.appendChild(spanEl);
+
+        if (win) {
+            h1El.textContent = "You win!";
+            h3El.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
+        } else {
+            h1El.textContent = "Good try!";
+            h3El.textContent = `The word we were looking for was: ${targetWord.toUpperCase()}.`;
+        }
+
+        for (let i = 1; i < 7; i++) {
+            const sectionEl: HTMLElement = document.createElement("section");
+            sectionEl.setAttribute("class", "mini-row");
+            sectionEl.setAttribute("id", `mini-row${i}`);
+
+            for (let j = 0; j < 5; j++) {
+                const subDivEl: HTMLElement = document.createElement("div");
+                const isGuessBox = guessesGrid.filter((value: letterBoxResult): boolean => value.x === j && value.y === i);
+
+                subDivEl.setAttribute("class", isGuessBox.length > 0 ? `mini-col ${isGuessBox[0].result}` : "mini-col");
+                sectionEl.appendChild(subDivEl);
+            }
+
+            divEl.appendChild(sectionEl);
+        }
+
+        spanEl.textContent = "Play Again?";
+        spanEl.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            // Clear game screen
+            gameColumnEls.forEach((element) => {
+                element.children[0].textContent = "";
+                element.removeAttribute("style");
+                element.setAttribute("class", "game-col");
+            });
+            miniGameColumnEls.forEach((element) => {
+                element.removeAttribute("style");
+                element.setAttribute("class", "mini-col");
+            });
+            keyboardBtnEls.forEach((element) => {
+                element.removeAttribute("class");
+                element.setAttribute("class", "letter-btn");
+            });
+            modalEl.setAttribute("style", "display:none");
+
+            return gameStart();
+        });
+    }
+
     modalEl.setAttribute("style", "display:flex");
     submitMessageEl.style.visibility = "hidden";
 
-    guessesGrid.forEach(({ x, y, result }: letterBoxResult): void => {
-        const targetRow = document.getElementById(`mini-row${y}`) as HTMLElement;
-        const targetBox = targetRow.children[x] as HTMLElement;
-
-        targetBox.classList.add(result);
-    });
-
-    if (win) {
-        resultTitleEl.textContent = "You win!";
-        resultMessageEl.textContent = `You guessed the word in ${guessNum}/6 guesses.`;
-
+    // Confetti to run after modal is visible because async
+    if (type === "end" && win) {
         // Confetti toss
         const jsConfetti = new JSConfetti() as any;
         await jsConfetti.addConfetti({ confettiNumber: 500 });
         jsConfetti.clearCanvas();
-    } else {
-        resultTitleEl.textContent = "Good try!";
-        resultMessageEl.textContent = `The word we were looking for was: ${targetWord.toUpperCase()}.`;
     }
 };
 
@@ -274,27 +324,6 @@ document.addEventListener("keydown", (event) => {
             return submitWord();
         }
     }
-});
-playAgainEl.addEventListener("click", (event) => {
-    event.preventDefault();
-
-    // Clear game screen
-    gameColumnEls.forEach((element) => {
-        element.children[0].textContent = "";
-        element.removeAttribute("style");
-        element.setAttribute("class", "game-col");
-    });
-    miniGameColumnEls.forEach((element) => {
-        element.removeAttribute("style");
-        element.setAttribute("class", "mini-col");
-    });
-    keyboardBtnEls.forEach((element) => {
-        element.removeAttribute("class");
-        element.setAttribute("class", "letter-btn");
-    });
-    modalEl.setAttribute("style", "display:none");
-
-    return gameStart();
 });
 
 gameStart();
