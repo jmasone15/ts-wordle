@@ -10,7 +10,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  height: 75vh;
+  height: 90vh;
+  overflow: hidden;
   margin-top: 5vh;
 }
 
@@ -200,7 +201,7 @@ nav div i:hover {
   text-align: center;
   align-items: center;
   border-radius: 3px;
-  margin-top: -20vh;
+  margin-top: -30vh;
 }
 
 .modal-content h1,
@@ -265,6 +266,92 @@ canvas {
 
   .hidden {
     display: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  nav h1 {
+    font-size: 30px;
+  }
+
+  .game-col {
+    height: 50px;
+    width: 50px;
+  }
+
+  .letter-btn {
+    height: 50px;
+    min-width: 33px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  nav h1 {
+    font-size: 25px;
+  }
+
+  i {
+    font-size: 25px;
+  }
+
+  .letter-btn {
+    height: 50px;
+    min-width: 30px;
+    font-size: 20px;
+    margin: 2px;
+  }
+
+  #backspace,
+  #enter {
+    padding: 0 10px;
+  }
+
+  #enter {
+    font-size: 10px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  nav h1 {
+    font-size: 25px;
+  }
+
+  i {
+    font-size: 25px;
+  }
+
+  .letter-btn {
+    height: 50px;
+    min-width: 30px;
+    font-size: 20px;
+    margin: 2px;
+  }
+
+  #backspace,
+  #enter {
+    padding: 0 10px;
+  }
+}
+
+@media screen and (max-height: 840px) {
+  .wrapper {
+    height: fit-content;
+  }
+}
+
+@media screen and (max-height: 750px) {
+  .wrapper {
+    margin-top: 0;
+  }
+
+  main {
+    margin-top: -5vh;
+  }
+}
+
+@media screen and (max-height: 610px) {
+  .wrapper {
+    flex-direction: row;
   }
 }
 
