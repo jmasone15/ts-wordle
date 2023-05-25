@@ -1,11 +1,10 @@
 // ToDo
-// 1. Light/Dark Mode
-// 2. Statistics
-// 3. Help
-// 4. Streak
-// 5. Hard Mode
-// 6. Additional Words
-// 7. Clean up code for TS
+// 1. Settings Modal (Light/Dark Mode, Hard Mode, Links)
+// 2. Statistics Modal (games played, win %, current streak, max streak)
+// 3. Help Modal (how to play examples)
+// 4. Hard Mode
+// 5. Additional Words
+// 6. Clean up code for TS
 
 // DOM Elements
 declare const JSConfetti: any;
