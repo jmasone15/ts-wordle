@@ -32,7 +32,8 @@ const deleteLetter = () => {
 const typeLetter = (letter) => {
     if (answerArray.length < 5) {
         answerArray.push(letter.toLowerCase());
-        getLetterBox().innerHTML = `<p>${letter}</p>`;
+        const pTag = getLetterBox().children[0];
+        pTag.textContent = letter;
     }
 };
 const submitWord = async () => {
@@ -182,16 +183,17 @@ const endGame = async (win) => {
     }
 };
 keyboardBtnEls.forEach((element) => {
-    element.addEventListener("click", () => {
+    element.addEventListener("click", (event) => {
         if (userInput) {
-            if (["backspace", "backspace-icon"].includes(element.getAttribute("id"))) {
+            const target = event.target;
+            if (["backspace", "backspace-icon"].includes(target.getAttribute("id"))) {
                 return deleteLetter();
             }
-            else if (element.innerText === "ENTER") {
+            else if (target.innerText === "ENTER") {
                 return submitWord();
             }
             else {
-                return typeLetter(element.innerText);
+                return typeLetter(target.textContent);
             }
         }
     });
