@@ -8,7 +8,6 @@ const gameColumnEls = [...document.getElementsByClassName("game-col")];
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")];
 const keyboardBtnEls = [...document.getElementsByTagName("button")];
 const testingEl = document.getElementById("test");
-let isMobileBool;
 let answerArray;
 let targetWord;
 let guessNum;
@@ -232,12 +231,11 @@ document.addEventListener("keydown", (event) => {
 playAgainEl.addEventListener("click", (event) => {
     event.preventDefault();
     gameColumnEls.forEach((element) => {
-        element.innerHTML = "";
+        element.children[0].textContent = "";
         element.removeAttribute("style");
         element.setAttribute("class", "game-col");
     });
     miniGameColumnEls.forEach((element) => {
-        element.innerHTML = "";
         element.removeAttribute("style");
         element.setAttribute("class", "mini-col");
     });

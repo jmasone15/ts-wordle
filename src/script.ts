@@ -17,7 +17,6 @@ const gameColumnEls = [...document.getElementsByClassName("game-col")] as HTMLEl
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")] as HTMLElement[];
 const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLElement[];
 const testingEl = document.getElementById("test") as HTMLElement;
-let isMobileBool: boolean;
 
 // Interfaces
 interface letterBoxResult {
@@ -281,12 +280,11 @@ playAgainEl.addEventListener("click", (event) => {
 
     // Clear game screen
     gameColumnEls.forEach((element) => {
-        element.innerHTML = "";
+        element.children[0].textContent = "";
         element.removeAttribute("style");
         element.setAttribute("class", "game-col");
     });
     miniGameColumnEls.forEach((element) => {
-        element.innerHTML = "";
         element.removeAttribute("style");
         element.setAttribute("class", "mini-col");
     });
