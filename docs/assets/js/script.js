@@ -20,19 +20,20 @@ const gameStart = async () => {
     userInput = true;
 };
 const getLetterBox = (num) => {
-    const targetRow = document.getElementById(`row${guessNum}`);
+    let targetRow = document.getElementById(`row${guessNum}`);
     return targetRow.children[num === undefined ? answerArray.length - 1 : num];
 };
 const deleteLetter = () => {
     if (answerArray.length > 0) {
-        getLetterBox().innerHTML = "";
+        let pTag = getLetterBox().children[0];
+        pTag.textContent = "";
         answerArray.pop();
     }
 };
 const typeLetter = (letter) => {
     if (answerArray.length < 5) {
         answerArray.push(letter.toLowerCase());
-        const pTag = getLetterBox().children[0];
+        let pTag = getLetterBox().children[0];
         pTag.textContent = letter;
     }
 };
@@ -184,8 +185,9 @@ const endGame = async (win) => {
 };
 keyboardBtnEls.forEach((element) => {
     element.addEventListener("click", (event) => {
+        event.preventDefault();
         if (userInput) {
-            const target = event.target;
+            let target = event.target;
             if (["backspace", "backspace-icon"].includes(target.getAttribute("id"))) {
                 return deleteLetter();
             }
@@ -198,20 +200,22 @@ keyboardBtnEls.forEach((element) => {
         }
     });
 });
-document.addEventListener("keydown", ({ key }) => {
+document.addEventListener("keydown", (event) => {
+    event.preventDefault();
     if (userInput) {
-        if (key.charCodeAt(0) > 96 && key.charCodeAt(0) < 123) {
-            return typeLetter(key);
+        if (event.key.charCodeAt(0) > 96 && event.key.charCodeAt(0) < 123) {
+            return typeLetter(event.key);
         }
-        else if (key === "Backspace") {
+        else if (event.key === "Backspace") {
             return deleteLetter();
         }
-        else if (key === "Enter") {
+        else if (event.key === "Enter") {
             return submitWord();
         }
     }
 });
-playAgainEl.addEventListener("click", () => {
+playAgainEl.addEventListener("click", (event) => {
+    event.preventDefault();
     gameColumnEls.forEach((element) => {
         element.innerHTML = "";
         element.removeAttribute("style");

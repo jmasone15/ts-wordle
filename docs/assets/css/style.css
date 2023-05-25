@@ -4,6 +4,7 @@
   margin: 0;
   font-family: "Ubuntu", sans-serif;
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 .wrapper {
@@ -409,6 +410,10 @@ canvas {
   #enter {
     padding: 0 10px;
     width: fit-content;
+  }
+
+  .modal-content {
+    margin-top: auto;
   }
 }
 

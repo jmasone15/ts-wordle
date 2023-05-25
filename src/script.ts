@@ -41,19 +41,20 @@ const gameStart = async (): Promise<void> => {
     userInput = true;
 };
 const getLetterBox = (num?: number): HTMLElement => {
-    const targetRow = document.getElementById(`row${guessNum}`) as HTMLElement;
+    let targetRow = document.getElementById(`row${guessNum}`) as HTMLElement;
     return targetRow.children[num === undefined ? answerArray.length - 1 : num] as HTMLElement;
 };
 const deleteLetter = (): void => {
     if (answerArray.length > 0) {
-        getLetterBox().innerHTML = "";
+        let pTag = getLetterBox().children[0] as HTMLElement;
+        pTag.textContent = "";
         answerArray.pop();
     }
 };
 const typeLetter = (letter: string): void => {
     if (answerArray.length < 5) {
         answerArray.push(letter.toLowerCase());
-        const pTag = getLetterBox().children[0] as HTMLElement;
+        let pTag = getLetterBox().children[0] as HTMLElement;
         pTag.textContent = letter;
     }
 };
@@ -222,8 +223,10 @@ const endGame = async (win: boolean): Promise<void> => {
 // Event Listeners
 keyboardBtnEls.forEach((element) => {
     element.addEventListener("click", (event) => {
+        event.preventDefault();
+
         if (userInput) {
-            const target = event.target as HTMLElement;
+            let target = event.target as HTMLElement;
 
             if (["backspace", "backspace-icon"].includes(target.getAttribute("id") as string)) {
                 return deleteLetter();
@@ -235,18 +238,22 @@ keyboardBtnEls.forEach((element) => {
         }
     });
 });
-document.addEventListener("keydown", ({ key }) => {
+document.addEventListener("keydown", (event) => {
+    event.preventDefault();
+
     if (userInput) {
-        if (key.charCodeAt(0) > 96 && key.charCodeAt(0) < 123) {
-            return typeLetter(key);
-        } else if (key === "Backspace") {
+        if (event.key.charCodeAt(0) > 96 && event.key.charCodeAt(0) < 123) {
+            return typeLetter(event.key);
+        } else if (event.key === "Backspace") {
             return deleteLetter();
-        } else if (key === "Enter") {
+        } else if (event.key === "Enter") {
             return submitWord();
         }
     }
 });
-playAgainEl.addEventListener("click", () => {
+playAgainEl.addEventListener("click", (event) => {
+    event.preventDefault();
+
     // Clear game screen
     gameColumnEls.forEach((element) => {
         element.innerHTML = "";
