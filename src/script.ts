@@ -8,8 +8,8 @@
 
 // DOM Elements
 declare const JSConfetti: any;
-const modalEl = document.getElementById("modal-box") as HTMLElement;
-const modalContentEl = document.getElementById("modal-data") as HTMLElement;
+const modalEl = document.getElementById("modal") as HTMLElement;
+const modalContentEl = document.getElementById("modal-content") as HTMLElement;
 const resultTitleEl = document.getElementById("result-title") as HTMLElement;
 const resultMessageEl = document.getElementById("result-message") as HTMLElement;
 const playAgainEl = document.getElementById("play-again") as HTMLElement;
@@ -17,7 +17,7 @@ const submitMessageEl = document.getElementById("submit-message") as HTMLElement
 const gameColumnEls = [...document.getElementsByClassName("game-col")] as HTMLElement[];
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")] as HTMLElement[];
 const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLElement[];
-const testingEl = document.getElementById("test") as HTMLElement;
+const settingsEl: HTMLElement | null = document.getElementById("settings");
 
 // Interfaces
 interface letterBoxResult {
@@ -223,6 +223,10 @@ const endGame = async (win: boolean): Promise<void> => {
     await populateModal("end", win);
 };
 const populateModal = async (type: string, win?: boolean): Promise<void> => {
+    while (modalContentEl.firstChild) {
+        modalContentEl.removeChild(modalContentEl.firstChild);
+    }
+
     if (type === "end") {
         const h1El: HTMLElement = document.createElement("h1");
         const h3El: HTMLElement = document.createElement("h3");
@@ -280,6 +284,75 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
 
             return gameStart();
         });
+    } else {
+        const h1El: HTMLElement = document.createElement("h1");
+        const closeEl: HTMLElement = document.createElement("i");
+
+        switch (type) {
+            case "settings":
+                h1El.textContent = "Settings";
+                break;
+
+            default:
+                break;
+        }
+
+        closeEl.setAttribute("class", "fa-solid fa-xmark close");
+        modalContentEl.appendChild(closeEl);
+        modalContentEl.appendChild(h1El);
+
+        closeEl.addEventListener("click", () => {
+            modalEl.setAttribute("style", "display:none");
+        });
+
+        if (type === "settings") {
+            for (let i = 0; i < 3; i++) {
+                const parentDivEl: HTMLElement = document.createElement("div");
+                const subDivEl: HTMLElement = document.createElement("div");
+                const h4El: HTMLElement = document.createElement("h4");
+                const pEl: HTMLElement = document.createElement("p");
+
+                parentDivEl.setAttribute("class", "settings-div");
+                subDivEl.setAttribute("class", "settings-div-text");
+
+                modalContentEl.appendChild(parentDivEl);
+                parentDivEl.appendChild(subDivEl);
+                subDivEl.appendChild(h4El);
+                subDivEl.appendChild(pEl);
+
+                if (i === 2) {
+                    const aEl: HTMLElement = document.createElement("a");
+                    const iconEl: HTMLElement = document.createElement("i");
+
+                    aEl.setAttribute("href", "https://www.jordanmasone.com");
+                    aEl.setAttribute("target", "_blank");
+                    iconEl.setAttribute("class", "fa-solid fa-arrow-up-right-from-square");
+
+                    h4El.textContent = "Buy me a Coffee";
+                    pEl.textContent = "I'm a nice dude I definitely deserve it.";
+
+                    parentDivEl.appendChild(aEl);
+                    aEl.appendChild(iconEl);
+                } else {
+                    const sliderDivEl: HTMLElement = document.createElement("div");
+                    const sliderEl: HTMLElement = document.createElement("input");
+                    const hrEl: HTMLElement = document.createElement("hr");
+
+                    sliderDivEl.setAttribute("class", "form-check form-switch");
+                    sliderEl.setAttribute("class", "slider form-check-input");
+                    sliderEl.setAttribute("type", "checkbox");
+                    sliderEl.setAttribute("role", "switch");
+                    sliderEl.setAttribute("id", "flexSwitchCheckDefault");
+
+                    h4El.textContent = i === 0 ? "Hard Mode" : "Dark Mode";
+                    pEl.textContent = i === 0 ? "Any revealed hints must be used in subsequent guesses." : "Who doesn't love a good dark mode?";
+
+                    modalContentEl.appendChild(hrEl);
+                    parentDivEl.appendChild(sliderDivEl);
+                    sliderDivEl.appendChild(sliderEl);
+                }
+            }
+        }
     }
 
     modalEl.setAttribute("style", "display:flex");
@@ -324,6 +397,10 @@ document.addEventListener("keydown", (event) => {
             return submitWord();
         }
     }
+});
+settingsEl?.addEventListener("click", async (event): Promise<void> => {
+    event.preventDefault();
+    return populateModal("settings");
 });
 
 gameStart();
