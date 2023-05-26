@@ -1,12 +1,13 @@
 // ToDo
-// 1. Settings Modal (Light/Dark Mode, Hard Mode, Links)
-// 2. Statistics Modal (games played, win %, current streak, max streak)
-// 3. Help Modal (how to play examples)
-// 4. Hard Mode
-// 5. Dark Mode
-// 6. Special Mode (Nyan Cat)
-// 7. Additional Words
-// 8. Clean up code for TS
+// Settings Modal (Light/Dark Mode, Hard Mode, Links)
+// Statistics Modal (games played, win %, current streak, max streak)
+// Help Modal (how to play examples)
+// Modal Exit Animation
+// Hard Mode
+// Dark Mode
+// Special Mode (Nyan Cat)
+// Additional Words
+// Clean up code for TS
 
 // DOM Elements
 declare const JSConfetti: any;
@@ -21,6 +22,7 @@ const miniGameColumnEls = [...document.getElementsByClassName("mini-col")] as HT
 const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLElement[];
 const settingsEl: HTMLElement | null = document.getElementById("settings");
 const statsEl: HTMLElement | null = document.getElementById("stats");
+const helpEl: HTMLElement | null = document.getElementById("help");
 
 // Interfaces
 interface letterBoxResult {
@@ -299,7 +301,6 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
             case "stats":
                 h1El.textContent = "Statistics";
                 break;
-
             default:
                 break;
         }
@@ -381,12 +382,14 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
             statsDivEl.setAttribute("class", "stats-div");
             graphDivEl.setAttribute("class", "stats-graph");
             hrTwoEl.setAttribute("style", "margin-bottom: 0;");
+            h4El.setAttribute("style", "text-align: left;");
+            h4El.textContent = "Guess Distribution";
 
             modalContentEl.appendChild(statsDivEl);
             modalContentEl.appendChild(hrEl);
-            modalContentEl.appendChild(h4El);
             modalContentEl.appendChild(graphDivEl);
             modalContentEl.appendChild(hrTwoEl);
+            graphDivEl.appendChild(h4El);
 
             for (let i = 0; i < 4; i++) {
                 const statDivEl: HTMLElement = document.createElement("div");
@@ -458,6 +461,137 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 statBarEl.appendChild(statBarLabelEl);
                 statBarEl.appendChild(statBarValueEl);
             }
+        } else {
+            const divEl: HTMLElement = document.createElement("div");
+            const h2El: HTMLElement = document.createElement("h2");
+            const pEl: HTMLElement = document.createElement("p");
+            const ulEl: HTMLElement = document.createElement("ul");
+            const liEl: HTMLElement = document.createElement("li");
+            const liTwoEl: HTMLElement = document.createElement("li");
+            const h6El: HTMLElement = document.createElement("h6");
+
+            divEl.setAttribute("class", "how-to");
+            h2El.textContent = "How to Play";
+            pEl.textContent = "Guess the Wordle in 6 tries.";
+            liEl.textContent = "Each guess must be a valid 5-letter-word.";
+            liTwoEl.textContent = "The color of the tiles will change to show how close your guess was to the word.";
+            h6El.textContent = "Examples";
+
+            modalContentEl.appendChild(divEl);
+            divEl.appendChild(h2El);
+            divEl.appendChild(pEl);
+            divEl.appendChild(ulEl);
+            ulEl.appendChild(liEl);
+            ulEl.appendChild(liTwoEl);
+            divEl.appendChild(h6El);
+
+            for (let i = 0; i < 3; i++) {
+                const rowEl: HTMLElement = document.createElement("div");
+                const subDivEl: HTMLElement = document.createElement("div");
+                const formatDivEl: HTMLElement = document.createElement("div");
+                const flexDivEl: HTMLElement = document.createElement("div");
+                const descEl: HTMLElement = document.createElement("p");
+
+                rowEl.setAttribute("class", "example-row");
+                flexDivEl.setAttribute("style", "display: flex;");
+
+                if (i === 0) {
+                    descEl.textContent = "W is in the word and in the correct spot.";
+                } else if (i === 1) {
+                    descEl.textContent = "I is in the word but in the wrong spot.";
+                } else {
+                    descEl.textContent = "U is not in the word in any spot.";
+                }
+
+                for (let j = 0; j < 5; j++) {
+                    let targetIndex: { index: number; class: string };
+                    const boxDivEl: HTMLElement = document.createElement("div");
+
+                    if (i === 0) {
+                        targetIndex = {
+                            index: 0,
+                            class: "correct"
+                        };
+                    } else if (i === 1) {
+                        targetIndex = {
+                            index: 1,
+                            class: "partial"
+                        };
+                    } else {
+                        targetIndex = {
+                            index: 3,
+                            class: "incorrect"
+                        };
+                    }
+
+                    switch (j) {
+                        case 0:
+                            if (i === 0) {
+                                boxDivEl.textContent = "W";
+                            } else if (i === 1) {
+                                boxDivEl.textContent = "P";
+                            } else {
+                                boxDivEl.textContent = "V";
+                            }
+                            break;
+                        case 1:
+                            if (i === 0) {
+                                boxDivEl.textContent = "E";
+                            } else if (i === 1) {
+                                boxDivEl.textContent = "I";
+                            } else {
+                                boxDivEl.textContent = "A";
+                            }
+                            break;
+                        case 2:
+                            if (i === 0) {
+                                boxDivEl.textContent = "A";
+                            } else if (i === 1) {
+                                boxDivEl.textContent = "L";
+                            } else {
+                                boxDivEl.textContent = "G";
+                            }
+                            break;
+                        case 3:
+                            if (i === 0) {
+                                boxDivEl.textContent = "R";
+                            } else if (i === 1) {
+                                boxDivEl.textContent = "L";
+                            } else {
+                                boxDivEl.textContent = "U";
+                            }
+                            break;
+                        default:
+                            if (i === 0) {
+                                boxDivEl.textContent = "Y";
+                            } else if (i === 1) {
+                                boxDivEl.textContent = "S";
+                            } else {
+                                boxDivEl.textContent = "E";
+                            }
+                            break;
+                    }
+
+                    if (j === 0) {
+                        boxDivEl.setAttribute("class", "example-box");
+                        boxDivEl.setAttribute("style", "margin-right: 2px");
+                    } else {
+                        boxDivEl.setAttribute("class", "example-box example-margin");
+                    }
+
+                    if (j === targetIndex.index) {
+                        boxDivEl.classList.add(`example-box-${targetIndex.class}`);
+                    }
+
+                    flexDivEl.appendChild(boxDivEl);
+                }
+
+                divEl.appendChild(rowEl);
+                rowEl.appendChild(subDivEl);
+                rowEl.appendChild(formatDivEl);
+                subDivEl.appendChild(flexDivEl);
+                subDivEl.appendChild(descEl);
+            }
         }
     }
 
@@ -511,6 +645,10 @@ settingsEl?.addEventListener("click", async (event): Promise<void> => {
 statsEl?.addEventListener("click", async (event) => {
     event.preventDefault();
     return populateModal("stats");
+});
+helpEl?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    return populateModal("help");
 });
 
 gameStart();

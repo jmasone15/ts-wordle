@@ -375,6 +375,71 @@ canvas {
   padding: 0 10px;
 }
 
+.how-to {
+  text-align: left;
+  font-weight: normal;
+  max-width: 450px;
+}
+
+.how-to ul {
+  padding-left: 1rem;
+}
+
+.how-to h2 {
+  margin-bottom: 0;
+}
+
+.how-to li {
+  font-size: 14px;
+}
+
+.example-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.example-row p {
+  font-size: 14px;
+}
+
+.example-box {
+  height: 35px;
+  width: 35px;
+  border: 2px solid gray;
+  text-align: center;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.example-margin {
+  margin: 0 2px;
+}
+
+.example-box-correct {
+  color: white;
+  background-color: #6aaa64;
+  border-color: transparent;
+  animation: flip-in 0.5s;
+}
+
+.example-box-partial {
+  color: white;
+  background-color: #c9b458;
+  border-color: transparent;
+  animation: flip-in 0.5s;
+}
+
+.example-box-incorrect {
+  color: white;
+  background-color: #787c7e;
+  border-color: transparent;
+  animation: flip-in 0.5s;
+}
+
 /* Animations */
 @keyframes flip-in {
   0% {

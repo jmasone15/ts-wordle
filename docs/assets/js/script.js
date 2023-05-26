@@ -10,6 +10,7 @@ const miniGameColumnEls = [...document.getElementsByClassName("mini-col")];
 const keyboardBtnEls = [...document.getElementsByTagName("button")];
 const settingsEl = document.getElementById("settings");
 const statsEl = document.getElementById("stats");
+const helpEl = document.getElementById("help");
 let answerArray;
 let targetWord;
 let guessNum;
@@ -315,11 +316,13 @@ const populateModal = async (type, win) => {
             statsDivEl.setAttribute("class", "stats-div");
             graphDivEl.setAttribute("class", "stats-graph");
             hrTwoEl.setAttribute("style", "margin-bottom: 0;");
+            h4El.setAttribute("style", "text-align: left;");
+            h4El.textContent = "Guess Distribution";
             modalContentEl.appendChild(statsDivEl);
             modalContentEl.appendChild(hrEl);
-            modalContentEl.appendChild(h4El);
             modalContentEl.appendChild(graphDivEl);
             modalContentEl.appendChild(hrTwoEl);
+            graphDivEl.appendChild(h4El);
             for (let i = 0; i < 4; i++) {
                 const statDivEl = document.createElement("div");
                 const h3El = document.createElement("h3");
@@ -384,6 +387,141 @@ const populateModal = async (type, win) => {
                 statBarEl.appendChild(statBarValueEl);
             }
         }
+        else {
+            const divEl = document.createElement("div");
+            const h2El = document.createElement("h2");
+            const pEl = document.createElement("p");
+            const ulEl = document.createElement("ul");
+            const liEl = document.createElement("li");
+            const liTwoEl = document.createElement("li");
+            const h6El = document.createElement("h6");
+            divEl.setAttribute("class", "how-to");
+            h2El.textContent = "How to Play";
+            pEl.textContent = "Guess the Wordle in 6 tries.";
+            liEl.textContent = "Each guess must be a valid 5-letter-word.";
+            liTwoEl.textContent = "The color of the tiles will change to show how close your guess was to the word.";
+            h6El.textContent = "Examples";
+            modalContentEl.appendChild(divEl);
+            divEl.appendChild(h2El);
+            divEl.appendChild(pEl);
+            divEl.appendChild(ulEl);
+            ulEl.appendChild(liEl);
+            ulEl.appendChild(liTwoEl);
+            divEl.appendChild(h6El);
+            for (let i = 0; i < 3; i++) {
+                const rowEl = document.createElement("div");
+                const subDivEl = document.createElement("div");
+                const formatDivEl = document.createElement("div");
+                const flexDivEl = document.createElement("div");
+                const descEl = document.createElement("p");
+                rowEl.setAttribute("class", "example-row");
+                flexDivEl.setAttribute("style", "display: flex;");
+                if (i === 0) {
+                    descEl.textContent = "W is in the word and in the correct spot.";
+                }
+                else if (i === 1) {
+                    descEl.textContent = "I is in the word but in the wrong spot.";
+                }
+                else {
+                    descEl.textContent = "U is not in the word in any spot.";
+                }
+                for (let j = 0; j < 5; j++) {
+                    let targetIndex;
+                    const boxDivEl = document.createElement("div");
+                    if (i === 0) {
+                        targetIndex = {
+                            index: 0,
+                            class: "correct"
+                        };
+                    }
+                    else if (i === 1) {
+                        targetIndex = {
+                            index: 1,
+                            class: "partial"
+                        };
+                    }
+                    else {
+                        targetIndex = {
+                            index: 3,
+                            class: "incorrect"
+                        };
+                    }
+                    switch (j) {
+                        case 0:
+                            if (i === 0) {
+                                boxDivEl.textContent = "W";
+                            }
+                            else if (i === 1) {
+                                boxDivEl.textContent = "P";
+                            }
+                            else {
+                                boxDivEl.textContent = "V";
+                            }
+                            break;
+                        case 1:
+                            if (i === 0) {
+                                boxDivEl.textContent = "E";
+                            }
+                            else if (i === 1) {
+                                boxDivEl.textContent = "I";
+                            }
+                            else {
+                                boxDivEl.textContent = "A";
+                            }
+                            break;
+                        case 2:
+                            if (i === 0) {
+                                boxDivEl.textContent = "A";
+                            }
+                            else if (i === 1) {
+                                boxDivEl.textContent = "L";
+                            }
+                            else {
+                                boxDivEl.textContent = "G";
+                            }
+                            break;
+                        case 3:
+                            if (i === 0) {
+                                boxDivEl.textContent = "R";
+                            }
+                            else if (i === 1) {
+                                boxDivEl.textContent = "L";
+                            }
+                            else {
+                                boxDivEl.textContent = "U";
+                            }
+                            break;
+                        default:
+                            if (i === 0) {
+                                boxDivEl.textContent = "Y";
+                            }
+                            else if (i === 1) {
+                                boxDivEl.textContent = "S";
+                            }
+                            else {
+                                boxDivEl.textContent = "E";
+                            }
+                            break;
+                    }
+                    if (j === 0) {
+                        boxDivEl.setAttribute("class", "example-box");
+                        boxDivEl.setAttribute("style", "margin-right: 2px");
+                    }
+                    else {
+                        boxDivEl.setAttribute("class", "example-box example-margin");
+                    }
+                    if (j === targetIndex.index) {
+                        boxDivEl.classList.add(`example-box-${targetIndex.class}`);
+                    }
+                    flexDivEl.appendChild(boxDivEl);
+                }
+                divEl.appendChild(rowEl);
+                rowEl.appendChild(subDivEl);
+                rowEl.appendChild(formatDivEl);
+                subDivEl.appendChild(flexDivEl);
+                subDivEl.appendChild(descEl);
+            }
+        }
     }
     modalEl.setAttribute("style", "display:flex");
     submitMessageEl.style.visibility = "hidden";
@@ -431,5 +569,9 @@ settingsEl?.addEventListener("click", async (event) => {
 statsEl?.addEventListener("click", async (event) => {
     event.preventDefault();
     return populateModal("stats");
+});
+helpEl?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    return populateModal("help");
 });
 gameStart();
