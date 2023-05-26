@@ -251,7 +251,7 @@ const populateModal = async (type, win) => {
             modalEl.setAttribute("style", "display:none");
         });
         if (type === "settings") {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 4; i++) {
                 const parentDivEl = document.createElement("div");
                 const subDivEl = document.createElement("div");
                 const h4El = document.createElement("h4");
@@ -262,7 +262,7 @@ const populateModal = async (type, win) => {
                 parentDivEl.appendChild(subDivEl);
                 subDivEl.appendChild(h4El);
                 subDivEl.appendChild(pEl);
-                if (i === 2) {
+                if (i === 3) {
                     const aEl = document.createElement("a");
                     const iconEl = document.createElement("i");
                     aEl.setAttribute("href", "https://www.jordanmasone.com");
@@ -282,8 +282,20 @@ const populateModal = async (type, win) => {
                     sliderEl.setAttribute("type", "checkbox");
                     sliderEl.setAttribute("role", "switch");
                     sliderEl.setAttribute("id", "flexSwitchCheckDefault");
-                    h4El.textContent = i === 0 ? "Hard Mode" : "Dark Mode";
-                    pEl.textContent = i === 0 ? "Any revealed hints must be used in subsequent guesses." : "Who doesn't love a good dark mode?";
+                    switch (i) {
+                        case 0:
+                            h4El.textContent = "Hard Mode";
+                            pEl.textContent = "Any revealed hints must be used in subsequent guesses.";
+                            break;
+                        case 1:
+                            h4El.textContent = "Dark Mode";
+                            pEl.textContent = "Who doesn't love a good dark mode?";
+                            break;
+                        default:
+                            h4El.textContent = "Surprise!";
+                            pEl.textContent = "What could it be? You'll never know until you try :).";
+                            break;
+                    }
                     modalContentEl.appendChild(hrEl);
                     parentDivEl.appendChild(sliderDivEl);
                     sliderDivEl.appendChild(sliderEl);

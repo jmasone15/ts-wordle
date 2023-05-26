@@ -3,8 +3,10 @@
 // 2. Statistics Modal (games played, win %, current streak, max streak)
 // 3. Help Modal (how to play examples)
 // 4. Hard Mode
-// 5. Additional Words
-// 6. Clean up code for TS
+// 5. Dark Mode
+// 6. Special Mode (Nyan Cat)
+// 7. Additional Words
+// 8. Clean up code for TS
 
 // DOM Elements
 declare const JSConfetti: any;
@@ -306,7 +308,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
         });
 
         if (type === "settings") {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 4; i++) {
                 const parentDivEl: HTMLElement = document.createElement("div");
                 const subDivEl: HTMLElement = document.createElement("div");
                 const h4El: HTMLElement = document.createElement("h4");
@@ -320,7 +322,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 subDivEl.appendChild(h4El);
                 subDivEl.appendChild(pEl);
 
-                if (i === 2) {
+                if (i === 3) {
                     const aEl: HTMLElement = document.createElement("a");
                     const iconEl: HTMLElement = document.createElement("i");
 
@@ -344,8 +346,20 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                     sliderEl.setAttribute("role", "switch");
                     sliderEl.setAttribute("id", "flexSwitchCheckDefault");
 
-                    h4El.textContent = i === 0 ? "Hard Mode" : "Dark Mode";
-                    pEl.textContent = i === 0 ? "Any revealed hints must be used in subsequent guesses." : "Who doesn't love a good dark mode?";
+                    switch (i) {
+                        case 0:
+                            h4El.textContent = "Hard Mode";
+                            pEl.textContent = "Any revealed hints must be used in subsequent guesses.";
+                            break;
+                        case 1:
+                            h4El.textContent = "Dark Mode";
+                            pEl.textContent = "Who doesn't love a good dark mode?";
+                            break;
+                        default:
+                            h4El.textContent = "Surprise!";
+                            pEl.textContent = "What could it be? You'll never know until you try :).";
+                            break;
+                    }
 
                     modalContentEl.appendChild(hrEl);
                     parentDivEl.appendChild(sliderDivEl);
