@@ -9,6 +9,7 @@ const gameColumnEls = [...document.getElementsByClassName("game-col")];
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")];
 const keyboardBtnEls = [...document.getElementsByTagName("button")];
 const settingsEl = document.getElementById("settings");
+const statsEl = document.getElementById("stats");
 let answerArray;
 let targetWord;
 let guessNum;
@@ -241,6 +242,9 @@ const populateModal = async (type, win) => {
             case "settings":
                 h1El.textContent = "Settings";
                 break;
+            case "stats":
+                h1El.textContent = "Statistics";
+                break;
             default:
                 break;
         }
@@ -302,6 +306,84 @@ const populateModal = async (type, win) => {
                 }
             }
         }
+        else if (type === "stats") {
+            const statsDivEl = document.createElement("div");
+            const hrEl = document.createElement("hr");
+            const h4El = document.createElement("h4");
+            const graphDivEl = document.createElement("div");
+            const hrTwoEl = document.createElement("hr");
+            statsDivEl.setAttribute("class", "stats-div");
+            graphDivEl.setAttribute("class", "stats-graph");
+            hrTwoEl.setAttribute("style", "margin-bottom: 0;");
+            modalContentEl.appendChild(statsDivEl);
+            modalContentEl.appendChild(hrEl);
+            modalContentEl.appendChild(h4El);
+            modalContentEl.appendChild(graphDivEl);
+            modalContentEl.appendChild(hrTwoEl);
+            for (let i = 0; i < 4; i++) {
+                const statDivEl = document.createElement("div");
+                const h3El = document.createElement("h3");
+                const pEl = document.createElement("p");
+                switch (i) {
+                    case 0:
+                        h3El.textContent = "8";
+                        pEl.textContent = "Played";
+                        break;
+                    case 1:
+                        h3El.textContent = "88";
+                        pEl.textContent = "Win %";
+                        break;
+                    case 2:
+                        h3El.textContent = "1";
+                        pEl.textContent = "Current Streak";
+                        break;
+                    default:
+                        h3El.textContent = "4";
+                        pEl.textContent = "Max Streak";
+                        break;
+                }
+                statDivEl.setAttribute("class", "stats-num");
+                statDivEl.appendChild(h3El);
+                statDivEl.appendChild(pEl);
+                statsDivEl.appendChild(statDivEl);
+            }
+            for (let i = 1; i < 7; i++) {
+                const statBarEl = document.createElement("div");
+                const statBarLabelEl = document.createElement("p");
+                const statBarValueEl = document.createElement("p");
+                statBarEl.setAttribute("class", "stats-bar");
+                statBarLabelEl.setAttribute("class", "stats-bar-label");
+                statBarValueEl.setAttribute("class", "stats-bar-value");
+                statBarLabelEl.textContent = i.toString();
+                switch (i) {
+                    case 0:
+                        statBarValueEl.textContent = "0";
+                        break;
+                    case 1:
+                        statBarValueEl.textContent = "0";
+                        break;
+                    case 2:
+                        statBarValueEl.textContent = "2";
+                        statBarValueEl.setAttribute("style", "width: 67%");
+                        break;
+                    case 3:
+                        statBarValueEl.textContent = "3";
+                        statBarValueEl.setAttribute("style", "width: 100%");
+                        break;
+                    case 4:
+                        statBarValueEl.textContent = "1";
+                        statBarValueEl.setAttribute("style", "width: 34%");
+                        break;
+                    default:
+                        statBarValueEl.textContent = "1";
+                        statBarValueEl.setAttribute("style", "width: 34%");
+                        break;
+                }
+                graphDivEl.appendChild(statBarEl);
+                statBarEl.appendChild(statBarLabelEl);
+                statBarEl.appendChild(statBarValueEl);
+            }
+        }
     }
     modalEl.setAttribute("style", "display:flex");
     submitMessageEl.style.visibility = "hidden";
@@ -345,5 +427,9 @@ document.addEventListener("keydown", (event) => {
 settingsEl?.addEventListener("click", async (event) => {
     event.preventDefault();
     return populateModal("settings");
+});
+statsEl?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    return populateModal("stats");
 });
 gameStart();

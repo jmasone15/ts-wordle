@@ -20,6 +20,7 @@ const gameColumnEls = [...document.getElementsByClassName("game-col")] as HTMLEl
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")] as HTMLElement[];
 const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLElement[];
 const settingsEl: HTMLElement | null = document.getElementById("settings");
+const statsEl: HTMLElement | null = document.getElementById("stats");
 
 // Interfaces
 interface letterBoxResult {
@@ -36,6 +37,7 @@ let userInput = false;
 let guessesGrid: letterBoxResult[] = [];
 let isMobile = false;
 
+// Mobile User
 (function (a) {
     if (
         /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
@@ -294,6 +296,9 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
             case "settings":
                 h1El.textContent = "Settings";
                 break;
+            case "stats":
+                h1El.textContent = "Statistics";
+                break;
 
             default:
                 break;
@@ -366,6 +371,93 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                     sliderDivEl.appendChild(sliderEl);
                 }
             }
+        } else if (type === "stats") {
+            const statsDivEl: HTMLElement = document.createElement("div");
+            const hrEl: HTMLElement = document.createElement("hr");
+            const h4El: HTMLElement = document.createElement("h4");
+            const graphDivEl: HTMLElement = document.createElement("div");
+            const hrTwoEl: HTMLElement = document.createElement("hr");
+
+            statsDivEl.setAttribute("class", "stats-div");
+            graphDivEl.setAttribute("class", "stats-graph");
+            hrTwoEl.setAttribute("style", "margin-bottom: 0;");
+
+            modalContentEl.appendChild(statsDivEl);
+            modalContentEl.appendChild(hrEl);
+            modalContentEl.appendChild(h4El);
+            modalContentEl.appendChild(graphDivEl);
+            modalContentEl.appendChild(hrTwoEl);
+
+            for (let i = 0; i < 4; i++) {
+                const statDivEl: HTMLElement = document.createElement("div");
+                const h3El: HTMLElement = document.createElement("h3");
+                const pEl: HTMLElement = document.createElement("p");
+
+                switch (i) {
+                    case 0:
+                        h3El.textContent = "8";
+                        pEl.textContent = "Played";
+                        break;
+                    case 1:
+                        h3El.textContent = "88";
+                        pEl.textContent = "Win %";
+                        break;
+                    case 2:
+                        h3El.textContent = "1";
+                        pEl.textContent = "Current Streak";
+                        break;
+                    default:
+                        h3El.textContent = "4";
+                        pEl.textContent = "Max Streak";
+                        break;
+                }
+
+                statDivEl.setAttribute("class", "stats-num");
+                statDivEl.appendChild(h3El);
+                statDivEl.appendChild(pEl);
+
+                statsDivEl.appendChild(statDivEl);
+            }
+
+            for (let i = 1; i < 7; i++) {
+                const statBarEl: HTMLElement = document.createElement("div");
+                const statBarLabelEl: HTMLElement = document.createElement("p");
+                const statBarValueEl: HTMLElement = document.createElement("p");
+
+                statBarEl.setAttribute("class", "stats-bar");
+                statBarLabelEl.setAttribute("class", "stats-bar-label");
+                statBarValueEl.setAttribute("class", "stats-bar-value");
+                statBarLabelEl.textContent = i.toString();
+
+                switch (i) {
+                    case 0:
+                        statBarValueEl.textContent = "0";
+                        break;
+                    case 1:
+                        statBarValueEl.textContent = "0";
+                        break;
+                    case 2:
+                        statBarValueEl.textContent = "2";
+                        statBarValueEl.setAttribute("style", "width: 67%");
+                        break;
+                    case 3:
+                        statBarValueEl.textContent = "3";
+                        statBarValueEl.setAttribute("style", "width: 100%");
+                        break;
+                    case 4:
+                        statBarValueEl.textContent = "1";
+                        statBarValueEl.setAttribute("style", "width: 34%");
+                        break;
+                    default:
+                        statBarValueEl.textContent = "1";
+                        statBarValueEl.setAttribute("style", "width: 34%");
+                        break;
+                }
+
+                graphDivEl.appendChild(statBarEl);
+                statBarEl.appendChild(statBarLabelEl);
+                statBarEl.appendChild(statBarValueEl);
+            }
         }
     }
 
@@ -415,6 +507,10 @@ document.addEventListener("keydown", (event) => {
 settingsEl?.addEventListener("click", async (event): Promise<void> => {
     event.preventDefault();
     return populateModal("settings");
+});
+statsEl?.addEventListener("click", async (event) => {
+    event.preventDefault();
+    return populateModal("stats");
 });
 
 gameStart();
