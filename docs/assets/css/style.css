@@ -189,9 +189,9 @@ nav div i:hover {
   flex-direction: column;
   padding: 50px 30px 70px 30px;
   text-align: center;
+  margin-top: -20vh;
   align-items: center;
   border-radius: 3px;
-  margin-top: -30vh;
   box-shadow: -7px -7px 20px 0px #0002,
     -4px -4px 5px 0px #0001,
     7px 7px 20px 0px #0002,
@@ -390,6 +390,10 @@ canvas {
 /* Media Queries */
 @media screen and (max-height: 1000px) {
 
+  #modal-content {
+    margin-top: 0;
+  }
+
   .wrapper {
     justify-content: flex-start;
     height: fit-content;
@@ -461,6 +465,7 @@ canvas {
   nav div i {
     font-size: 22px;
   }
+
 }
 
 @media screen and (max-height: 550px) {
