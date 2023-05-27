@@ -525,6 +525,18 @@ canvas {
   }
 }
 
+@keyframes pop {
+  from {
+    transform: scale(0.8);
+    opacity: 0
+  }
+
+  40% {
+    transform: scale(1.1);
+    opacity: 1
+  }
+}
+
 
 /* Media Queries */
 @media screen and (max-height: 1000px) {
