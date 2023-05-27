@@ -3,7 +3,6 @@
 * {
   margin: 0;
   font-family: "Ubuntu", sans-serif;
-  /* overflow: hidden; */
   touch-action: manipulation;
 }
 
@@ -192,6 +191,7 @@ nav div i:hover {
   margin-top: -20vh;
   align-items: center;
   border-radius: 3px;
+  animation: drop 0.2s ease forwards;
   box-shadow: -7px -7px 20px 0px #0002,
     -4px -4px 5px 0px #0001,
     7px 7px 20px 0px #0002,
@@ -500,6 +500,31 @@ canvas {
     transform: translateY(0);
   }
 }
+
+@keyframes drop {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+@keyframes drop-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
 
 /* Media Queries */
 @media screen and (max-height: 1000px) {
