@@ -15,6 +15,7 @@ const keyboardBtnEls = [...document.getElementsByTagName("button")] as HTMLEleme
 const settingsEl: HTMLElement | null = document.getElementById("settings");
 const statsEl: HTMLElement | null = document.getElementById("stats");
 const helpEl: HTMLElement | null = document.getElementById("help");
+const styleSheet: HTMLElement | null = document.getElementById("style");
 
 // Interfaces
 interface LetterBoxResult {
@@ -62,7 +63,11 @@ const gameStart = async (): Promise<void> => {
     guessNum = 1;
     userInput = true;
 };
-const runAnimation = async (element: HTMLElement, animation: string, delayMS?: number): Promise<void> => {
+const runAnimation = async (
+    element: HTMLElement,
+    animation: string,
+    delayMS?: number
+): Promise<void> => {
     // Running element.offsetWidth adds a slight delay before the recreation of the style attribute.
     // This allows the animation to not be cut off.
 
@@ -103,7 +108,10 @@ const submitWord = async (): Promise<void> => {
 
         if (!isDictionaryWord) {
             displaySubmitMessage(false);
-            return runAnimation(document.getElementById(`row${guessNum}`) as HTMLElement, "animation: shake 0.2s");
+            return runAnimation(
+                document.getElementById(`row${guessNum}`) as HTMLElement,
+                "animation: shake 0.2s"
+            );
         }
 
         if (settingsData.hardMode && revealedHints.length > 0) {
@@ -112,10 +120,16 @@ const submitWord = async (): Promise<void> => {
 
                 if (type === "correct" && !(letter === answerArray[index])) {
                     displaySubmitMessage(false, type, letter);
-                    return runAnimation(document.getElementById(`row${guessNum}`) as HTMLElement, "animation: shake 0.2s");
+                    return runAnimation(
+                        document.getElementById(`row${guessNum}`) as HTMLElement,
+                        "animation: shake 0.2s"
+                    );
                 } else if (type === "partial" && !answerArray.includes(letter)) {
                     displaySubmitMessage(false, type, letter);
-                    return runAnimation(document.getElementById(`row${guessNum}`) as HTMLElement, "animation: shake 0.2s");
+                    return runAnimation(
+                        document.getElementById(`row${guessNum}`) as HTMLElement,
+                        "animation: shake 0.2s"
+                    );
                 }
             }
         }
@@ -133,22 +147,32 @@ const submitWord = async (): Promise<void> => {
         });
         for (let i = 0; i < answerArray.length; i++) {
             const targetBox: HTMLElement | null = getLetterBox(i);
+            const targetButton: HTMLElement | null = keyboardBtnEls.filter(
+                element => element.textContent?.toUpperCase() === answerArray[i].toUpperCase()
+            )[0];
             const result: LetterBoxResult = { x: i, y: guessNum, result: "" };
 
             if (correctIdxs.includes(i)) {
                 targetBox.classList.add("correct");
+                targetButton.classList.add("correct");
                 result.result = "correct";
                 revealedHints.push({ letter: answerArray[i], type: "correct", index: i });
             } else {
                 const partialIdx: number = splitWord.indexOf(answerArray[i]);
-                if (partialIdx > -1 && !matchedIdxs.includes(partialIdx) && !correctIdxs.includes(partialIdx)) {
+                if (
+                    partialIdx > -1 &&
+                    !matchedIdxs.includes(partialIdx) &&
+                    !correctIdxs.includes(partialIdx)
+                ) {
                     targetBox.classList.add("partial");
+                    targetButton.classList.add("partial");
                     matchedIdxs.push(partialIdx);
                     result.result = "partial";
                     revealedHints.push({ letter: answerArray[i], type: "partial", index: i });
-                    splitWord[i] = "";
+                    splitWord[partialIdx] = "";
                 } else {
                     targetBox.classList.add("incorrect");
+                    targetButton.classList.add("incorrect");
                     result.result = "incorrect";
                 }
             }
@@ -184,7 +208,7 @@ const randomWord = async (): Promise<void> => {
     targetWord = data[randomIdx].toLowerCase();
     console.log(targetWord);
 };
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const checkWord = async (): Promise<boolean> => {
     const response = await fetch("./assets/utils/dictionary.json");
     const data = await response.json();
@@ -275,9 +299,14 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
 
             for (let j = 0; j < 5; j++) {
                 const subDivEl: HTMLElement = document.createElement("div");
-                const isGuessBox = guessesGrid.filter((value: LetterBoxResult): boolean => value.x === j && value.y === i);
+                const isGuessBox = guessesGrid.filter(
+                    (value: LetterBoxResult): boolean => value.x === j && value.y === i
+                );
 
-                subDivEl.setAttribute("class", isGuessBox.length > 0 ? `mini-col ${isGuessBox[0].result}` : "mini-col");
+                subDivEl.setAttribute(
+                    "class",
+                    isGuessBox.length > 0 ? `mini-col ${isGuessBox[0].result}` : "mini-col"
+                );
                 sectionEl.appendChild(subDivEl);
             }
 
@@ -285,20 +314,20 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
         }
 
         spanEl.textContent = "Play Again?";
-        spanEl.addEventListener("click", async (event) => {
+        spanEl.addEventListener("click", async event => {
             event.preventDefault();
 
             // Clear game screen
-            gameColumnEls.forEach((element) => {
+            gameColumnEls.forEach(element => {
                 element.children[0].textContent = "";
                 element.removeAttribute("style");
                 element.setAttribute("class", "game-col");
             });
-            miniGameColumnEls.forEach((element) => {
+            miniGameColumnEls.forEach(element => {
                 element.removeAttribute("style");
                 element.setAttribute("class", "mini-col");
             });
-            keyboardBtnEls.forEach((element) => {
+            keyboardBtnEls.forEach(element => {
                 element.removeAttribute("class");
                 element.setAttribute("class", "letter-btn");
             });
@@ -373,7 +402,8 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                     switch (i) {
                         case 0:
                             h4El.textContent = "Hard Mode";
-                            pEl.textContent = "Any revealed hints must be used in subsequent guesses.";
+                            pEl.textContent =
+                                "Any revealed hints must be used in subsequent guesses.";
                             sliderEl.checked = settingsData.hardMode;
                             break;
                         case 1:
@@ -383,7 +413,8 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                             break;
                         default:
                             h4El.textContent = "Surprise!";
-                            pEl.textContent = "What could it be? You'll never know until you try :).";
+                            pEl.textContent =
+                                "What could it be? You'll never know until you try :).";
                             sliderEl.checked = settingsData.specialMode;
                             break;
                     }
@@ -401,6 +432,13 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                             case 1:
                                 settingsData.darkMode = !settingsData.darkMode;
                                 sliderEl.checked = settingsData.darkMode;
+
+                                if (settingsData.darkMode) {
+                                    styleSheet?.setAttribute("href", "./assets/css/dark.css");
+                                } else {
+                                    styleSheet?.setAttribute("href", "./assets/css/style.css");
+                                }
+
                                 break;
                             default:
                                 settingsData.specialMode = !settingsData.specialMode;
@@ -441,7 +479,11 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                         pEl.textContent = "Played";
                         break;
                     case 1:
-                        h3El.textContent = `${statsData.gamesWon === 0 ? 0 : Math.round((statsData.gamesWon / statsData.gamesPlayed) * 100)}`;
+                        h3El.textContent = `${
+                            statsData.gamesWon === 0
+                                ? 0
+                                : Math.round((statsData.gamesWon / statsData.gamesPlayed) * 100)
+                        }`;
                         pEl.textContent = "Win %";
                         break;
                     case 2:
@@ -475,7 +517,9 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 if (statsData.distribution[i] === undefined) {
                     guessPercentage = 0;
                 } else {
-                    guessPercentage = Math.round((statsData.distribution[i] / statsData.gamesPlayed) * 100);
+                    guessPercentage = Math.round(
+                        (statsData.distribution[i] / statsData.gamesPlayed) * 100
+                    );
                 }
 
                 switch (i) {
@@ -534,7 +578,8 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
             h2El.textContent = "How to Play";
             pEl.textContent = "Guess the Wordle in 6 tries.";
             liEl.textContent = "Each guess must be a valid 5-letter-word.";
-            liTwoEl.textContent = "The color of the tiles will change to show how close your guess was to the word.";
+            liTwoEl.textContent =
+                "The color of the tiles will change to show how close your guess was to the word.";
             h6El.textContent = "Examples";
 
             modalContentEl.appendChild(divEl);
@@ -655,7 +700,8 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
         }
     }
 
-    modalEl.setAttribute("style", "display:flex");
+    modalContentEl.removeAttribute("style");
+    modalEl.setAttribute("style", "display: flex");
     submitMessageEl.style.visibility = "hidden";
 
     // Confetti to run after modal is visible because async
@@ -681,6 +727,12 @@ const loadLocalStorage = () => {
         settingsData = JSON.parse(settings);
     }
 
+    if (settingsData.darkMode) {
+        styleSheet?.setAttribute("href", "./assets/css/dark.css");
+    } else {
+        styleSheet?.setAttribute("href", "./assets/css/style.css");
+    }
+
     if (stats === null) {
         statsData = {
             gamesPlayed: 0,
@@ -697,8 +749,8 @@ const loadLocalStorage = () => {
 };
 
 // Event Listeners
-keyboardBtnEls.forEach((element) => {
-    element.addEventListener("click", (event) => {
+keyboardBtnEls.forEach(element => {
+    element.addEventListener("click", event => {
         event.preventDefault();
 
         if (userInput) {
@@ -714,7 +766,7 @@ keyboardBtnEls.forEach((element) => {
         }
     });
 });
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", event => {
     event.preventDefault();
 
     if (userInput) {
@@ -733,13 +785,13 @@ settingsEl?.addEventListener("click", async (event): Promise<void> => {
         return populateModal("settings");
     }
 });
-statsEl?.addEventListener("click", async (event) => {
+statsEl?.addEventListener("click", async event => {
     if (userInput) {
         event.preventDefault();
         return populateModal("stats");
     }
 });
-helpEl?.addEventListener("click", async (event) => {
+helpEl?.addEventListener("click", async event => {
     if (userInput) {
         event.preventDefault();
         return populateModal("help");
