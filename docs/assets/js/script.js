@@ -1,9 +1,6 @@
 "use strict";
 const modalEl = document.getElementById("modal");
 const modalContentEl = document.getElementById("modal-content");
-const resultTitleEl = document.getElementById("result-title");
-const resultMessageEl = document.getElementById("result-message");
-const playAgainEl = document.getElementById("play-again");
 const submitMessageEl = document.getElementById("submit-message");
 const gameColumnEls = [...document.getElementsByClassName("game-col")];
 const miniGameColumnEls = [...document.getElementsByClassName("mini-col")];
@@ -18,11 +15,14 @@ let userInput = false;
 let guessesGrid;
 let isMobile = false;
 let statsData;
+let settingsData;
+let revealedHints;
 const gameStart = async () => {
-    generateStatistics();
+    loadLocalStorage();
     await randomWord();
     answerArray = [];
     guessesGrid = [];
+    revealedHints = [];
     guessNum = 1;
     userInput = true;
 };
@@ -63,6 +63,19 @@ const submitWord = async () => {
             displaySubmitMessage(false);
             return runAnimation(document.getElementById(`row${guessNum}`), "animation: shake 0.2s");
         }
+        if (settingsData.hardMode && revealedHints.length > 0) {
+            for (let i = 0; i < revealedHints.length; i++) {
+                const { letter, type, index } = revealedHints[i];
+                if (type === "correct" && !(letter === answerArray[index])) {
+                    displaySubmitMessage(false, type, letter);
+                    return runAnimation(document.getElementById(`row${guessNum}`), "animation: shake 0.2s");
+                }
+                else if (type === "partial" && !answerArray.includes(letter)) {
+                    displaySubmitMessage(false, type, letter);
+                    return runAnimation(document.getElementById(`row${guessNum}`), "animation: shake 0.2s");
+                }
+            }
+        }
         userInput = false;
         const splitWord = targetWord.split("");
         const correctIdxs = [];
@@ -79,6 +92,7 @@ const submitWord = async () => {
             if (correctIdxs.includes(i)) {
                 targetBox.classList.add("correct");
                 result.result = "correct";
+                revealedHints.push({ letter: answerArray[i], type: "correct", index: i });
             }
             else {
                 const partialIdx = splitWord.indexOf(answerArray[i]);
@@ -86,12 +100,12 @@ const submitWord = async () => {
                     targetBox.classList.add("partial");
                     matchedIdxs.push(partialIdx);
                     result.result = "partial";
+                    revealedHints.push({ letter: answerArray[i], type: "partial", index: i });
                     splitWord[i] = "";
                 }
                 else {
                     targetBox.classList.add("incorrect");
                     result.result = "incorrect";
-                    splitWord[i] = "";
                 }
             }
             guessesGrid.push(result);
@@ -129,7 +143,7 @@ const checkWord = async () => {
     const data = await response.json();
     return data.includes(answerArray.join(""));
 };
-const displaySubmitMessage = (correct) => {
+const displaySubmitMessage = (correct, type, letter) => {
     if (correct) {
         switch (guessNum) {
             case 1:
@@ -153,7 +167,15 @@ const displaySubmitMessage = (correct) => {
         }
     }
     else {
-        submitMessageEl.textContent = "Not a valid word.";
+        if (type === "correct") {
+            submitMessageEl.textContent = `Guess must include ${letter?.toUpperCase()} in the correct position.`;
+        }
+        else if (type === "partial") {
+            submitMessageEl.textContent = `Guess must include ${letter?.toUpperCase()}.`;
+        }
+        else {
+            submitMessageEl.textContent = "Not a valid word.";
+        }
     }
     submitMessageEl.style.visibility = "visible";
 };
@@ -283,19 +305,39 @@ const populateModal = async (type, win) => {
                         case 0:
                             h4El.textContent = "Hard Mode";
                             pEl.textContent = "Any revealed hints must be used in subsequent guesses.";
+                            sliderEl.checked = settingsData.hardMode;
                             break;
                         case 1:
                             h4El.textContent = "Dark Mode";
                             pEl.textContent = "Who doesn't love a good dark mode?";
+                            sliderEl.checked = settingsData.darkMode;
                             break;
                         default:
                             h4El.textContent = "Surprise!";
                             pEl.textContent = "What could it be? You'll never know until you try :).";
+                            sliderEl.checked = settingsData.specialMode;
                             break;
                     }
                     modalContentEl.appendChild(hrEl);
                     parentDivEl.appendChild(sliderDivEl);
                     sliderDivEl.appendChild(sliderEl);
+                    sliderEl.addEventListener("click", () => {
+                        switch (i) {
+                            case 0:
+                                settingsData.hardMode = !settingsData.hardMode;
+                                sliderEl.checked = settingsData.hardMode;
+                                break;
+                            case 1:
+                                settingsData.darkMode = !settingsData.darkMode;
+                                sliderEl.checked = settingsData.darkMode;
+                                break;
+                            default:
+                                settingsData.specialMode = !settingsData.specialMode;
+                                sliderEl.checked = settingsData.specialMode;
+                                break;
+                        }
+                        localStorage.setItem("jm-wordle-settings", JSON.stringify(settingsData));
+                    });
                 }
             }
         }
@@ -544,9 +586,21 @@ const populateModal = async (type, win) => {
         jsConfetti.clearCanvas();
     }
 };
-const generateStatistics = () => {
-    const data = localStorage.getItem("jm-wordle-statistics");
-    if (data === null) {
+const loadLocalStorage = () => {
+    const stats = localStorage.getItem("jm-wordle-statistics");
+    const settings = localStorage.getItem("jm-wordle-settings");
+    if (settings === null) {
+        settingsData = {
+            hardMode: false,
+            darkMode: false,
+            specialMode: false
+        };
+        localStorage.setItem("jm-wordle-settings", JSON.stringify(settingsData));
+    }
+    else {
+        settingsData = JSON.parse(settings);
+    }
+    if (stats === null) {
         statsData = {
             gamesPlayed: 0,
             gamesWon: 0,
@@ -558,7 +612,7 @@ const generateStatistics = () => {
         return populateModal("help");
     }
     else {
-        statsData = JSON.parse(data);
+        statsData = JSON.parse(stats);
     }
 };
 keyboardBtnEls.forEach((element) => {
@@ -593,15 +647,21 @@ document.addEventListener("keydown", (event) => {
     }
 });
 settingsEl?.addEventListener("click", async (event) => {
-    event.preventDefault();
-    return populateModal("settings");
+    if (userInput) {
+        event.preventDefault();
+        return populateModal("settings");
+    }
 });
 statsEl?.addEventListener("click", async (event) => {
-    event.preventDefault();
-    return populateModal("stats");
+    if (userInput) {
+        event.preventDefault();
+        return populateModal("stats");
+    }
 });
 helpEl?.addEventListener("click", async (event) => {
-    event.preventDefault();
-    return populateModal("help");
+    if (userInput) {
+        event.preventDefault();
+        return populateModal("help");
+    }
 });
 gameStart();
