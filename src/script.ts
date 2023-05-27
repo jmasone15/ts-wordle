@@ -46,7 +46,7 @@ let answerArray: string[];
 let targetWord: string;
 let guessNum: number;
 let userInput = false;
-let guessesGrid: LetterBoxResult[] = [];
+let guessesGrid: LetterBoxResult[];
 let isMobile = false;
 let statsData: Statistics;
 
@@ -103,7 +103,7 @@ const submitWord = async (): Promise<void> => {
             displaySubmitMessage(false);
 
             if (!isMobile) {
-                let targetRow = document.getElementById(`row${guessNum}`) as HTMLElement;
+                const targetRow = document.getElementById(`row${guessNum}`) as HTMLElement;
                 targetRow.removeAttribute("style");
                 targetRow.offsetWidth;
                 targetRow.setAttribute("style", "animation: shake 0.2s");
@@ -112,58 +112,43 @@ const submitWord = async (): Promise<void> => {
             return;
         }
 
-        let correctCount = 0;
-        let wordArray = targetWord.split("");
         userInput = false;
+        const splitWord: string[] = targetWord.split("");
+        const correctIdxs: number[] = [];
+        const matchedIdxs: number[] = [];
 
+        answerArray.forEach((letter: string, index: number) => {
+            if (letter === splitWord[index]) {
+                correctIdxs.push(index);
+                splitWord[index] = "";
+            }
+        });
         for (let i = 0; i < answerArray.length; i++) {
-            const targetBox = getLetterBox(i);
-            const letter = answerArray[i];
-            const letterBox = document.getElementById(letter) as HTMLElement;
+            const targetBox: HTMLElement | null = getLetterBox(i);
             const result: LetterBoxResult = { x: i, y: guessNum, result: "" };
-            const classList = [...letterBox.classList];
 
-            if (letter === wordArray[i]) {
+            if (correctIdxs.includes(i)) {
                 targetBox.classList.add("correct");
-
-                if (classList.length > 1) {
-                    if (classList.includes("partial") || classList.includes("incorrect")) {
-                        letterBox.setAttribute("class", "letter-btn");
-                        letterBox.classList.add("correct");
-                    }
-                } else {
-                    letterBox.classList.add("correct");
-                }
-
                 result.result = "correct";
-                correctCount++;
-                wordArray[i] = "";
-            } else if (wordArray.includes(letter)) {
-                targetBox.classList.add("partial");
-
-                if (classList.length > 1) {
-                    if (classList.includes("incorrect")) {
-                        letterBox.classList.remove("incorrect");
-                        letterBox.classList.add("partial");
-                    }
-                } else {
-                    letterBox.classList.add("partial");
-                }
-
-                result.result = "partial";
-                wordArray[wordArray.indexOf(letter)] = "";
             } else {
-                targetBox.classList.add("incorrect");
-
-                if (classList.length === 1) {
-                    letterBox.classList.add("incorrect");
+                const partialIdx: number = splitWord.indexOf(answerArray[i]);
+                if (
+                    partialIdx > -1 &&
+                    !matchedIdxs.includes(partialIdx) &&
+                    !correctIdxs.includes(partialIdx)
+                ) {
+                    targetBox.classList.add("partial");
+                    matchedIdxs.push(partialIdx);
+                    result.result = "partial";
+                    splitWord[i] = "";
+                } else {
+                    targetBox.classList.add("incorrect");
+                    result.result = "incorrect";
+                    splitWord[i] = "";
                 }
-
-                result.result = "incorrect";
             }
 
             guessesGrid.push(result);
-
             if (!isMobile) {
                 targetBox.removeAttribute("style");
                 targetBox.offsetWidth;
@@ -172,7 +157,7 @@ const submitWord = async (): Promise<void> => {
             await delay(500);
         }
 
-        if (correctCount === 5) {
+        if (correctIdxs.length === 5) {
             displaySubmitMessage(true);
 
             if (!isMobile) {

@@ -15,7 +15,7 @@ let answerArray;
 let targetWord;
 let guessNum;
 let userInput = false;
-let guessesGrid = [];
+let guessesGrid;
 let isMobile = false;
 let statsData;
 (function (a) {
@@ -57,57 +57,45 @@ const submitWord = async () => {
         if (!isDictionaryWord) {
             displaySubmitMessage(false);
             if (!isMobile) {
-                let targetRow = document.getElementById(`row${guessNum}`);
+                const targetRow = document.getElementById(`row${guessNum}`);
                 targetRow.removeAttribute("style");
                 targetRow.offsetWidth;
                 targetRow.setAttribute("style", "animation: shake 0.2s");
             }
             return;
         }
-        let correctCount = 0;
-        let wordArray = targetWord.split("");
         userInput = false;
+        const splitWord = targetWord.split("");
+        const correctIdxs = [];
+        const matchedIdxs = [];
+        answerArray.forEach((letter, index) => {
+            if (letter === splitWord[index]) {
+                correctIdxs.push(index);
+                splitWord[index] = "";
+            }
+        });
         for (let i = 0; i < answerArray.length; i++) {
             const targetBox = getLetterBox(i);
-            const letter = answerArray[i];
-            const letterBox = document.getElementById(letter);
             const result = { x: i, y: guessNum, result: "" };
-            const classList = [...letterBox.classList];
-            if (letter === wordArray[i]) {
+            if (correctIdxs.includes(i)) {
                 targetBox.classList.add("correct");
-                if (classList.length > 1) {
-                    if (classList.includes("partial") || classList.includes("incorrect")) {
-                        letterBox.setAttribute("class", "letter-btn");
-                        letterBox.classList.add("correct");
-                    }
-                }
-                else {
-                    letterBox.classList.add("correct");
-                }
                 result.result = "correct";
-                correctCount++;
-                wordArray[i] = "";
-            }
-            else if (wordArray.includes(letter)) {
-                targetBox.classList.add("partial");
-                if (classList.length > 1) {
-                    if (classList.includes("incorrect")) {
-                        letterBox.classList.remove("incorrect");
-                        letterBox.classList.add("partial");
-                    }
-                }
-                else {
-                    letterBox.classList.add("partial");
-                }
-                result.result = "partial";
-                wordArray[wordArray.indexOf(letter)] = "";
             }
             else {
-                targetBox.classList.add("incorrect");
-                if (classList.length === 1) {
-                    letterBox.classList.add("incorrect");
+                const partialIdx = splitWord.indexOf(answerArray[i]);
+                if (partialIdx > -1 &&
+                    !matchedIdxs.includes(partialIdx) &&
+                    !correctIdxs.includes(partialIdx)) {
+                    targetBox.classList.add("partial");
+                    matchedIdxs.push(partialIdx);
+                    result.result = "partial";
+                    splitWord[i] = "";
                 }
-                result.result = "incorrect";
+                else {
+                    targetBox.classList.add("incorrect");
+                    result.result = "incorrect";
+                    splitWord[i] = "";
+                }
             }
             guessesGrid.push(result);
             if (!isMobile) {
@@ -117,7 +105,7 @@ const submitWord = async () => {
             }
             await delay(500);
         }
-        if (correctCount === 5) {
+        if (correctIdxs.length === 5) {
             displaySubmitMessage(true);
             if (!isMobile) {
                 for (let i = 0; i < 5; i++) {
