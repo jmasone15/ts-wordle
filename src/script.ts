@@ -1,7 +1,4 @@
 // ToDo
-// Settings Modal (Light/Dark Mode, Hard Mode, Links)
-// Statistics Modal (games played, win %, current streak, max streak)
-// Help Modal (how to play examples)
 // Modal Exit Animation
 // Hard Mode
 // Dark Mode
@@ -362,7 +359,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                     const aEl: HTMLElement = document.createElement("a");
                     const iconEl: HTMLElement = document.createElement("i");
 
-                    aEl.setAttribute("href", "https://www.jordanmasone.com");
+                    aEl.setAttribute("href", "https://bmc.link/jordanmasoM");
                     aEl.setAttribute("target", "_blank");
                     iconEl.setAttribute("class", "fa-solid fa-arrow-up-right-from-square");
 

@@ -285,7 +285,7 @@ const populateModal = async (type, win) => {
                 if (i === 3) {
                     const aEl = document.createElement("a");
                     const iconEl = document.createElement("i");
-                    aEl.setAttribute("href", "https://www.jordanmasone.com");
+                    aEl.setAttribute("href", "https://bmc.link/jordanmasoM");
                     aEl.setAttribute("target", "_blank");
                     iconEl.setAttribute("class", "fa-solid fa-arrow-up-right-from-square");
                     h4El.textContent = "Buy me a Coffee";
