@@ -265,7 +265,7 @@ const endGame = async (win: boolean): Promise<void> => {
         statsData.streak = 0;
     }
 
-    localStorage.setItem("statistics", JSON.stringify(statsData));
+    localStorage.setItem("jm-wordle-statistics", JSON.stringify(statsData));
     await populateModal("end", win);
 };
 const populateModal = async (type: string, win?: boolean): Promise<void> => {
@@ -472,6 +472,8 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 const statDivEl: HTMLElement = document.createElement("div");
                 const h3El: HTMLElement = document.createElement("h3");
                 const pEl: HTMLElement = document.createElement("p");
+
+                console.log(statsData);
 
                 switch (i) {
                     case 0:

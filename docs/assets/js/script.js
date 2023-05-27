@@ -199,7 +199,7 @@ const endGame = async (win) => {
     else {
         statsData.streak = 0;
     }
-    localStorage.setItem("statistics", JSON.stringify(statsData));
+    localStorage.setItem("jm-wordle-statistics", JSON.stringify(statsData));
     await populateModal("end", win);
 };
 const populateModal = async (type, win) => {
@@ -376,6 +376,7 @@ const populateModal = async (type, win) => {
                 const statDivEl = document.createElement("div");
                 const h3El = document.createElement("h3");
                 const pEl = document.createElement("p");
+                console.log(statsData);
                 switch (i) {
                     case 0:
                         h3El.textContent = statsData.gamesPlayed.toString();
