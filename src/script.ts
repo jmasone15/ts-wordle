@@ -9,6 +9,11 @@
 // Additional Words
 // Clean up code for TS
 
+// Letter checking process
+// 1. Check all letters for correct placements - update the letter set accordingly
+// 2. Check remaining letters for partial placements - update the letter set accordingly
+// 3. Set all remaining letters to incorrect
+
 // DOM Elements
 declare const JSConfetti: any;
 const modalEl = document.getElementById("modal") as HTMLElement;
@@ -25,10 +30,17 @@ const statsEl: HTMLElement | null = document.getElementById("stats");
 const helpEl: HTMLElement | null = document.getElementById("help");
 
 // Interfaces
-interface letterBoxResult {
+interface LetterBoxResult {
     x: number;
     y: number;
     result: string;
+}
+interface Statistics {
+    gamesPlayed: number;
+    gamesWon: number;
+    streak: number;
+    maxStreak: number;
+    distribution: number[];
 }
 
 // Game Variables
@@ -36,8 +48,9 @@ let answerArray: string[];
 let targetWord: string;
 let guessNum: number;
 let userInput = false;
-let guessesGrid: letterBoxResult[] = [];
+let guessesGrid: LetterBoxResult[] = [];
 let isMobile = false;
+let statsData: Statistics;
 
 // Mobile User
 (function (a) {
@@ -55,6 +68,7 @@ let isMobile = false;
 // Game Functions
 const gameStart = async (): Promise<void> => {
     // Game Variables
+    generateStatistics();
     await randomWord();
     answerArray = [];
     guessesGrid = [];
@@ -106,7 +120,7 @@ const submitWord = async (): Promise<void> => {
             const targetBox = getLetterBox(i);
             const letter = answerArray[i];
             const letterBox = document.getElementById(letter) as HTMLElement;
-            const result: letterBoxResult = { x: i, y: guessNum, result: "" };
+            const result: LetterBoxResult = { x: i, y: guessNum, result: "" };
             const classList = [...letterBox.classList];
 
             if (letter === wordArray[i]) {
@@ -226,6 +240,22 @@ const displaySubmitMessage = (correct: boolean): void => {
     submitMessageEl.style.visibility = "visible";
 };
 const endGame = async (win: boolean): Promise<void> => {
+    statsData.gamesPlayed++;
+
+    if (win) {
+        statsData.gamesWon++;
+        statsData.streak++;
+
+        if (statsData.streak > statsData.maxStreak) {
+            statsData.maxStreak = statsData.streak;
+        }
+
+        statsData.distribution[guessNum - 1]++;
+    } else {
+        statsData.streak = 0;
+    }
+
+    localStorage.setItem("statistics", JSON.stringify(statsData));
     await populateModal("end", win);
 };
 const populateModal = async (type: string, win?: boolean): Promise<void> => {
@@ -259,7 +289,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
 
             for (let j = 0; j < 5; j++) {
                 const subDivEl: HTMLElement = document.createElement("div");
-                const isGuessBox = guessesGrid.filter((value: letterBoxResult): boolean => value.x === j && value.y === i);
+                const isGuessBox = guessesGrid.filter((value: LetterBoxResult): boolean => value.x === j && value.y === i);
 
                 subDivEl.setAttribute("class", isGuessBox.length > 0 ? `mini-col ${isGuessBox[0].result}` : "mini-col");
                 sectionEl.appendChild(subDivEl);
@@ -398,19 +428,19 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
 
                 switch (i) {
                     case 0:
-                        h3El.textContent = "8";
+                        h3El.textContent = statsData.gamesPlayed.toString();
                         pEl.textContent = "Played";
                         break;
                     case 1:
-                        h3El.textContent = "88";
+                        h3El.textContent = `${statsData.gamesWon === 0 ? 0 : Math.round((statsData.gamesWon / statsData.gamesPlayed) * 100)}`;
                         pEl.textContent = "Win %";
                         break;
                     case 2:
-                        h3El.textContent = "1";
+                        h3El.textContent = statsData.streak.toString();
                         pEl.textContent = "Current Streak";
                         break;
                     default:
-                        h3El.textContent = "4";
+                        h3El.textContent = statsData.maxStreak.toString();
                         pEl.textContent = "Max Streak";
                         break;
                 }
@@ -422,7 +452,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 statsDivEl.appendChild(statDivEl);
             }
 
-            for (let i = 1; i < 7; i++) {
+            for (let i = 0; i < 6; i++) {
                 const statBarEl: HTMLElement = document.createElement("div");
                 const statBarLabelEl: HTMLElement = document.createElement("p");
                 const statBarValueEl: HTMLElement = document.createElement("p");
@@ -430,30 +460,51 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 statBarEl.setAttribute("class", "stats-bar");
                 statBarLabelEl.setAttribute("class", "stats-bar-label");
                 statBarValueEl.setAttribute("class", "stats-bar-value");
-                statBarLabelEl.textContent = i.toString();
+                statBarLabelEl.textContent = (i + 1).toString();
+
+                let guessPercentage: number;
+                if (statsData.distribution[i] === undefined) {
+                    guessPercentage = 0;
+                } else {
+                    guessPercentage = Math.round((statsData.distribution[i] / statsData.gamesPlayed) * 100);
+                }
 
                 switch (i) {
                     case 0:
-                        statBarValueEl.textContent = "0";
+                        statBarValueEl.textContent = (statsData.distribution[i] || 0).toString();
+                        if (guessPercentage > 0) {
+                            statBarValueEl.setAttribute("style", `width: ${guessPercentage}%`);
+                        }
                         break;
                     case 1:
-                        statBarValueEl.textContent = "0";
+                        statBarValueEl.textContent = (statsData.distribution[i] || 0).toString();
+                        if (guessPercentage > 0) {
+                            statBarValueEl.setAttribute("style", `width: ${guessPercentage}%`);
+                        }
                         break;
                     case 2:
-                        statBarValueEl.textContent = "2";
-                        statBarValueEl.setAttribute("style", "width: 67%");
+                        statBarValueEl.textContent = (statsData.distribution[i] || 0).toString();
+                        if (guessPercentage > 0) {
+                            statBarValueEl.setAttribute("style", `width: ${guessPercentage}%`);
+                        }
                         break;
                     case 3:
-                        statBarValueEl.textContent = "3";
-                        statBarValueEl.setAttribute("style", "width: 100%");
+                        statBarValueEl.textContent = (statsData.distribution[i] || 0).toString();
+                        if (guessPercentage > 0) {
+                            statBarValueEl.setAttribute("style", `width: ${guessPercentage}%`);
+                        }
                         break;
                     case 4:
-                        statBarValueEl.textContent = "1";
-                        statBarValueEl.setAttribute("style", "width: 34%");
+                        statBarValueEl.textContent = (statsData.distribution[i] || 0).toString();
+                        if (guessPercentage > 0) {
+                            statBarValueEl.setAttribute("style", `width: ${guessPercentage}%`);
+                        }
                         break;
                     default:
-                        statBarValueEl.textContent = "1";
-                        statBarValueEl.setAttribute("style", "width: 34%");
+                        statBarValueEl.textContent = (statsData.distribution[i] || 0).toString();
+                        if (guessPercentage > 0) {
+                            statBarValueEl.setAttribute("style", `width: ${guessPercentage}%`);
+                        }
                         break;
                 }
 
@@ -604,6 +655,22 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
         const jsConfetti = new JSConfetti() as any;
         await jsConfetti.addConfetti({ confettiNumber: 500 });
         jsConfetti.clearCanvas();
+    }
+};
+const generateStatistics = () => {
+    const data = localStorage.getItem("statistics");
+
+    if (data === null) {
+        statsData = {
+            gamesPlayed: 0,
+            gamesWon: 0,
+            streak: 0,
+            maxStreak: 0,
+            distribution: [0, 0, 0, 0, 0, 0]
+        };
+        localStorage.setItem("statistics", JSON.stringify(statsData));
+    } else {
+        statsData = JSON.parse(data);
     }
 };
 
