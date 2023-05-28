@@ -277,7 +277,7 @@ const populateModal = async (type, win) => {
             modalEl.setAttribute("style", "display:none");
         });
         if (type === "settings") {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 3; i++) {
                 const parentDivEl = document.createElement("div");
                 const subDivEl = document.createElement("div");
                 const h4El = document.createElement("h4");
@@ -288,7 +288,7 @@ const populateModal = async (type, win) => {
                 parentDivEl.appendChild(subDivEl);
                 subDivEl.appendChild(h4El);
                 subDivEl.appendChild(pEl);
-                if (i === 3) {
+                if (i === 2) {
                     const aEl = document.createElement("a");
                     const iconEl = document.createElement("i");
                     aEl.setAttribute("href", "https://bmc.link/jordanmasoM");
@@ -315,16 +315,10 @@ const populateModal = async (type, win) => {
                                 "Any revealed hints must be used in subsequent guesses.";
                             sliderEl.checked = settingsData.hardMode;
                             break;
-                        case 1:
+                        default:
                             h4El.textContent = "Dark Mode";
                             pEl.textContent = "Who doesn't love a good dark mode?";
                             sliderEl.checked = settingsData.darkMode;
-                            break;
-                        default:
-                            h4El.textContent = "Surprise!";
-                            pEl.textContent =
-                                "What could it be? You'll never know until you try :).";
-                            sliderEl.checked = settingsData.specialMode;
                             break;
                     }
                     modalContentEl.appendChild(hrEl);
@@ -336,7 +330,7 @@ const populateModal = async (type, win) => {
                                 settingsData.hardMode = !settingsData.hardMode;
                                 sliderEl.checked = settingsData.hardMode;
                                 break;
-                            case 1:
+                            default:
                                 settingsData.darkMode = !settingsData.darkMode;
                                 sliderEl.checked = settingsData.darkMode;
                                 if (settingsData.darkMode) {
@@ -345,10 +339,6 @@ const populateModal = async (type, win) => {
                                 else {
                                     styleSheet?.setAttribute("href", "./assets/css/style.css");
                                 }
-                                break;
-                            default:
-                                settingsData.specialMode = !settingsData.specialMode;
-                                sliderEl.checked = settingsData.specialMode;
                                 break;
                         }
                         localStorage.setItem("jm-wordle-settings", JSON.stringify(settingsData));
@@ -612,8 +602,7 @@ const loadLocalStorage = () => {
     if (settings === null) {
         settingsData = {
             hardMode: false,
-            darkMode: false,
-            specialMode: false
+            darkMode: false
         };
         localStorage.setItem("jm-wordle-settings", JSON.stringify(settingsData));
     }

@@ -1,6 +1,4 @@
 // ToDo
-// Dark Mode
-// Special Mode (Nyan Cat)
 // Additional Words
 // Clean up code for TS
 
@@ -33,7 +31,6 @@ interface Statistics {
 interface Settings {
     hardMode: boolean;
     darkMode: boolean;
-    specialMode: boolean;
 }
 interface Hint {
     letter: string;
@@ -361,7 +358,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
         });
 
         if (type === "settings") {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 3; i++) {
                 const parentDivEl: HTMLElement = document.createElement("div");
                 const subDivEl: HTMLElement = document.createElement("div");
                 const h4El: HTMLElement = document.createElement("h4");
@@ -375,7 +372,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 subDivEl.appendChild(h4El);
                 subDivEl.appendChild(pEl);
 
-                if (i === 3) {
+                if (i === 2) {
                     const aEl: HTMLElement = document.createElement("a");
                     const iconEl: HTMLElement = document.createElement("i");
 
@@ -406,16 +403,10 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                                 "Any revealed hints must be used in subsequent guesses.";
                             sliderEl.checked = settingsData.hardMode;
                             break;
-                        case 1:
+                        default:
                             h4El.textContent = "Dark Mode";
                             pEl.textContent = "Who doesn't love a good dark mode?";
                             sliderEl.checked = settingsData.darkMode;
-                            break;
-                        default:
-                            h4El.textContent = "Surprise!";
-                            pEl.textContent =
-                                "What could it be? You'll never know until you try :).";
-                            sliderEl.checked = settingsData.specialMode;
                             break;
                     }
 
@@ -429,7 +420,7 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                                 settingsData.hardMode = !settingsData.hardMode;
                                 sliderEl.checked = settingsData.hardMode;
                                 break;
-                            case 1:
+                            default:
                                 settingsData.darkMode = !settingsData.darkMode;
                                 sliderEl.checked = settingsData.darkMode;
 
@@ -439,10 +430,6 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                                     styleSheet?.setAttribute("href", "./assets/css/style.css");
                                 }
 
-                                break;
-                            default:
-                                settingsData.specialMode = !settingsData.specialMode;
-                                sliderEl.checked = settingsData.specialMode;
                                 break;
                         }
                         localStorage.setItem("jm-wordle-settings", JSON.stringify(settingsData));
@@ -721,8 +708,7 @@ const loadLocalStorage = () => {
     if (settings === null) {
         settingsData = {
             hardMode: false,
-            darkMode: false,
-            specialMode: false
+            darkMode: false
         };
         localStorage.setItem("jm-wordle-settings", JSON.stringify(settingsData));
     } else {
