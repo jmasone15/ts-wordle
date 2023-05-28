@@ -20,6 +20,7 @@ interface LetterBoxResult {
     x: number;
     y: number;
     result: string;
+    letter: string;
 }
 interface Statistics {
     gamesPlayed: number;
@@ -37,6 +38,11 @@ interface Hint {
     type: string;
     index: number;
 }
+interface Game {
+    targetWord: string;
+    currentGuess: number;
+    gameGrid: LetterBoxResult[];
+}
 
 // Game Variables
 let answerArray: string[];
@@ -48,16 +54,17 @@ let isMobile = false;
 let statsData: Statistics;
 let settingsData: Settings;
 let revealedHints: Hint[];
+let currentGame: Game;
 
 // Game Functions
 const gameStart = async (): Promise<void> => {
     // Game Variables
-    loadLocalStorage();
     await randomWord();
     answerArray = [];
     guessesGrid = [];
     revealedHints = [];
     guessNum = 1;
+    await loadLocalStorage();
     userInput = true;
 };
 const runAnimation = async (
@@ -147,7 +154,12 @@ const submitWord = async (): Promise<void> => {
             const targetButton: HTMLElement | null = keyboardBtnEls.filter(
                 element => element.textContent?.toUpperCase() === answerArray[i].toUpperCase()
             )[0];
-            const result: LetterBoxResult = { x: i, y: guessNum, result: "" };
+            const result: LetterBoxResult = {
+                x: i,
+                y: guessNum,
+                result: "",
+                letter: answerArray[i]
+            };
 
             if (correctIdxs.includes(i)) {
                 targetBox.classList.add("correct");
@@ -193,6 +205,11 @@ const submitWord = async (): Promise<void> => {
         } else {
             guessNum++;
             answerArray = [];
+
+            currentGame.currentGuess = guessNum;
+            currentGame.gameGrid = guessesGrid;
+            localStorage.setItem("jm-wordle-game", JSON.stringify(currentGame));
+
             userInput = true;
         }
     }
@@ -203,7 +220,6 @@ const randomWord = async (): Promise<void> => {
     const randomIdx = Math.floor(Math.random() * data.length);
 
     targetWord = data[randomIdx].toLowerCase();
-    console.log(targetWord);
 };
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const checkWord = async (): Promise<boolean> => {
@@ -263,6 +279,8 @@ const endGame = async (win: boolean): Promise<void> => {
     }
 
     localStorage.setItem("jm-wordle-statistics", JSON.stringify(statsData));
+    localStorage.removeItem("jm-wordle-game");
+
     await populateModal("end", win);
 };
 const populateModal = async (type: string, win?: boolean): Promise<void> => {
@@ -701,9 +719,26 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
         jsConfetti.clearCanvas();
     }
 };
-const loadLocalStorage = () => {
+const loadPreviousGame = async (): Promise<void> => {
+    targetWord = currentGame.targetWord;
+    guessNum = currentGame.currentGuess;
+    guessesGrid = currentGame.gameGrid;
+
+    for (let i = 0; i < currentGame.gameGrid.length; i++) {
+        const hint = currentGame.gameGrid[i];
+        const targetRow = document.getElementById(`row${hint.y}`) as HTMLElement;
+        const targetBox = targetRow.children[hint.x] as HTMLElement;
+        const targetPtag = targetBox.children[0] as HTMLElement;
+
+        targetPtag.textContent = hint.letter;
+        targetBox.classList.add(hint.result);
+        await runAnimation(targetBox, "animation: flip-in 0.2s", 75);
+    }
+};
+const loadLocalStorage = async () => {
     const stats = localStorage.getItem("jm-wordle-statistics");
     const settings = localStorage.getItem("jm-wordle-settings");
+    const game = localStorage.getItem("jm-wordle-game");
 
     if (settings === null) {
         settingsData = {
@@ -719,6 +754,18 @@ const loadLocalStorage = () => {
         styleSheet?.setAttribute("href", "./assets/css/dark.css");
     } else {
         styleSheet?.setAttribute("href", "./assets/css/style.css");
+    }
+
+    if (game === null) {
+        currentGame = {
+            targetWord: targetWord,
+            currentGuess: 1,
+            gameGrid: []
+        };
+        localStorage.setItem("jm-wordle-game", JSON.stringify(currentGame));
+    } else {
+        currentGame = JSON.parse(game);
+        await loadPreviousGame();
     }
 
     if (stats === null) {

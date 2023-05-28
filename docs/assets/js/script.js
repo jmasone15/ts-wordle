@@ -18,13 +18,14 @@ let isMobile = false;
 let statsData;
 let settingsData;
 let revealedHints;
+let currentGame;
 const gameStart = async () => {
-    loadLocalStorage();
     await randomWord();
     answerArray = [];
     guessesGrid = [];
     revealedHints = [];
     guessNum = 1;
+    await loadLocalStorage();
     userInput = true;
 };
 const runAnimation = async (element, animation, delayMS) => {
@@ -90,7 +91,12 @@ const submitWord = async () => {
         for (let i = 0; i < answerArray.length; i++) {
             const targetBox = getLetterBox(i);
             const targetButton = keyboardBtnEls.filter(element => element.textContent?.toUpperCase() === answerArray[i].toUpperCase())[0];
-            const result = { x: i, y: guessNum, result: "" };
+            const result = {
+                x: i,
+                y: guessNum,
+                result: "",
+                letter: answerArray[i]
+            };
             if (correctIdxs.includes(i)) {
                 targetBox.classList.add("correct");
                 targetButton.classList.add("correct");
@@ -133,6 +139,9 @@ const submitWord = async () => {
         else {
             guessNum++;
             answerArray = [];
+            currentGame.currentGuess = guessNum;
+            currentGame.gameGrid = guessesGrid;
+            localStorage.setItem("jm-wordle-game", JSON.stringify(currentGame));
             userInput = true;
         }
     }
@@ -142,7 +151,6 @@ const randomWord = async () => {
     const data = await response.json();
     const randomIdx = Math.floor(Math.random() * data.length);
     targetWord = data[randomIdx].toLowerCase();
-    console.log(targetWord);
 };
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const checkWord = async () => {
@@ -200,6 +208,7 @@ const endGame = async (win) => {
         statsData.streak = 0;
     }
     localStorage.setItem("jm-wordle-statistics", JSON.stringify(statsData));
+    localStorage.removeItem("jm-wordle-game");
     await populateModal("end", win);
 };
 const populateModal = async (type, win) => {
@@ -596,9 +605,24 @@ const populateModal = async (type, win) => {
         jsConfetti.clearCanvas();
     }
 };
-const loadLocalStorage = () => {
+const loadPreviousGame = async () => {
+    targetWord = currentGame.targetWord;
+    guessNum = currentGame.currentGuess;
+    guessesGrid = currentGame.gameGrid;
+    for (let i = 0; i < currentGame.gameGrid.length; i++) {
+        const hint = currentGame.gameGrid[i];
+        const targetRow = document.getElementById(`row${hint.y}`);
+        const targetBox = targetRow.children[hint.x];
+        const targetPtag = targetBox.children[0];
+        targetPtag.textContent = hint.letter;
+        targetBox.classList.add(hint.result);
+        await runAnimation(targetBox, "animation: flip-in 0.2s", 75);
+    }
+};
+const loadLocalStorage = async () => {
     const stats = localStorage.getItem("jm-wordle-statistics");
     const settings = localStorage.getItem("jm-wordle-settings");
+    const game = localStorage.getItem("jm-wordle-game");
     if (settings === null) {
         settingsData = {
             hardMode: false,
@@ -614,6 +638,18 @@ const loadLocalStorage = () => {
     }
     else {
         styleSheet?.setAttribute("href", "./assets/css/style.css");
+    }
+    if (game === null) {
+        currentGame = {
+            targetWord: targetWord,
+            currentGuess: 1,
+            gameGrid: []
+        };
+        localStorage.setItem("jm-wordle-game", JSON.stringify(currentGame));
+    }
+    else {
+        currentGame = JSON.parse(game);
+        await loadPreviousGame();
     }
     if (stats === null) {
         statsData = {
