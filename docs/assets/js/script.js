@@ -90,7 +90,7 @@ const submitWord = async () => {
         });
         for (let i = 0; i < answerArray.length; i++) {
             const targetBox = getLetterBox(i);
-            const targetButton = keyboardBtnEls.filter(element => element.textContent?.toUpperCase() === answerArray[i].toUpperCase())[0];
+            const targetButton = keyboardBtnEls.filter((element) => element.textContent?.toUpperCase() === answerArray[i].toUpperCase())[0];
             const result = {
                 x: i,
                 y: guessNum,
@@ -105,9 +105,7 @@ const submitWord = async () => {
             }
             else {
                 const partialIdx = splitWord.indexOf(answerArray[i]);
-                if (partialIdx > -1 &&
-                    !matchedIdxs.includes(partialIdx) &&
-                    !correctIdxs.includes(partialIdx)) {
+                if (partialIdx > -1 && !matchedIdxs.includes(partialIdx) && !correctIdxs.includes(partialIdx)) {
                     targetBox.classList.add("partial");
                     targetButton.classList.add("partial");
                     matchedIdxs.push(partialIdx);
@@ -147,12 +145,11 @@ const submitWord = async () => {
     }
 };
 const randomWord = async () => {
-    const response = await fetch("./assets/utils/words.json");
+    const response = await fetch("https://jordans-api-production.up.railway.app/word/single");
     const data = await response.json();
-    const randomIdx = Math.floor(Math.random() * data.length);
-    targetWord = data[randomIdx].toLowerCase();
+    targetWord = data.word;
 };
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const checkWord = async () => {
     const response = await fetch("./assets/utils/dictionary.json");
     const data = await response.json();
@@ -247,16 +244,16 @@ const populateModal = async (type, win) => {
         spanEl.textContent = "Play Again?";
         spanEl.addEventListener("click", async (event) => {
             event.preventDefault();
-            gameColumnEls.forEach(element => {
+            gameColumnEls.forEach((element) => {
                 element.children[0].textContent = "";
                 element.removeAttribute("style");
                 element.setAttribute("class", "game-col");
             });
-            miniGameColumnEls.forEach(element => {
+            miniGameColumnEls.forEach((element) => {
                 element.removeAttribute("style");
                 element.setAttribute("class", "mini-col");
             });
-            keyboardBtnEls.forEach(element => {
+            keyboardBtnEls.forEach((element) => {
                 element.removeAttribute("class");
                 element.setAttribute("class", "letter-btn");
             });
@@ -320,8 +317,7 @@ const populateModal = async (type, win) => {
                     switch (i) {
                         case 0:
                             h4El.textContent = "Hard Mode";
-                            pEl.textContent =
-                                "Any revealed hints must be used in subsequent guesses.";
+                            pEl.textContent = "Any revealed hints must be used in subsequent guesses.";
                             sliderEl.checked = settingsData.hardMode;
                             break;
                         default:
@@ -382,9 +378,7 @@ const populateModal = async (type, win) => {
                         pEl.textContent = "Played";
                         break;
                     case 1:
-                        h3El.textContent = `${statsData.gamesWon === 0
-                            ? 0
-                            : Math.round((statsData.gamesWon / statsData.gamesPlayed) * 100)}`;
+                        h3El.textContent = `${statsData.gamesWon === 0 ? 0 : Math.round((statsData.gamesWon / statsData.gamesPlayed) * 100)}`;
                         pEl.textContent = "Win %";
                         break;
                     case 2:
@@ -471,8 +465,7 @@ const populateModal = async (type, win) => {
             h2El.textContent = "How to Play";
             pEl.textContent = "Guess the Wordle in 6 tries.";
             liEl.textContent = "Each guess must be a valid 5-letter-word.";
-            liTwoEl.textContent =
-                "The color of the tiles will change to show how close your guess was to the word.";
+            liTwoEl.textContent = "The color of the tiles will change to show how close your guess was to the word.";
             h6El.textContent = "Examples";
             modalContentEl.appendChild(divEl);
             divEl.appendChild(h2El);
@@ -666,8 +659,8 @@ const loadLocalStorage = async () => {
         statsData = JSON.parse(stats);
     }
 };
-keyboardBtnEls.forEach(element => {
-    element.addEventListener("click", event => {
+keyboardBtnEls.forEach((element) => {
+    element.addEventListener("click", (event) => {
         event.preventDefault();
         if (userInput) {
             let target = event.target;
@@ -683,7 +676,7 @@ keyboardBtnEls.forEach(element => {
         }
     });
 });
-document.addEventListener("keydown", event => {
+document.addEventListener("keydown", (event) => {
     event.preventDefault();
     if (userInput) {
         if (event.key.charCodeAt(0) > 96 && event.key.charCodeAt(0) < 123) {
