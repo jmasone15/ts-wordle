@@ -55,7 +55,6 @@ let currentGame: Game;
 // Game Functions
 const gameStart = async (): Promise<void> => {
     // Game Variables
-    await randomWord();
     answerArray = [];
     guessesGrid = [];
     revealedHints = [];
@@ -199,10 +198,10 @@ const randomWord = async (): Promise<void> => {
 };
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const checkWord = async (): Promise<boolean> => {
-    const response = await fetch("./assets/utils/dictionary.json");
+    const response = await fetch("https://jordans-api-production.up.railway.app/word/valid/" + answerArray.join(""));
     const data = await response.json();
 
-    return data.includes(answerArray.join(""));
+    return data;
 };
 const displaySubmitMessage = (correct: boolean, type?: string, letter?: string): void => {
     if (correct) {
@@ -447,8 +446,6 @@ const populateModal = async (type: string, win?: boolean): Promise<void> => {
                 const statDivEl: HTMLElement = document.createElement("div");
                 const h3El: HTMLElement = document.createElement("h3");
                 const pEl: HTMLElement = document.createElement("p");
-
-                console.log(statsData);
 
                 switch (i) {
                     case 0:
@@ -720,6 +717,7 @@ const loadLocalStorage = async () => {
     }
 
     if (game === null) {
+        await randomWord();
         currentGame = {
             targetWord: targetWord,
             currentGuess: 1,
